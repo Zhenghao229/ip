@@ -42,10 +42,37 @@ public class jack {
                 System.out.println("  " + tasks[index]);
                 continue;
             }
+            //-----Level 4------------
+            Task newTask;
 
-            tasks[count] = new Task(input);
-            System.out.println("added: " + input);
+            if(input.startsWith("todo ")) {
+                String desc = input.substring(5).trim();
+                newTask = new Todo(desc);
+            } else if (input.startsWith("deadline ")) {
+                String rest = input.substring(9).trim();
+                String[] parts = rest.split(" /by ", 2);
+                String desc = parts[0].trim();
+                String by = parts[1].trim();
+                newTask = new Deadline(desc,by);
+            } else if (input.startsWith("event ")) {
+                String rest = input.substring(6).trim();
+                String[] p1 = rest.split(" /from ", 2);
+                String desc = p1[0].trim();
+                String[] p2 =p1[1].split(" /to ",2);
+                String from = p2[0].trim();
+                String to = p2[1].trim();
+                newTask = new Event(desc,from,to);
+            }else {
+                newTask = new Todo(input);
+            }
+
+
+            tasks[count] = newTask;
             count++;
+
+            System.out.println("Got it. I've added this task:");
+            System.out.println("  " + newTask);
+            System.out.println("Now you have " + count + " tasks in the list.");
 
         }
     }
