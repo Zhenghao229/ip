@@ -5,7 +5,7 @@ public class jack {
         Scanner scanner = new Scanner(System.in);
 
         // storage for tasks
-        String[] items = new String[100];
+        Task[] tasks = new Task[100];
         int count = 0;
 
         // Greeting
@@ -22,16 +22,31 @@ public class jack {
 
             if (input.equals("list")) {
                 for (int i = 0; i < count; i++) {
-                    System.out.println((i + 1) + ". " + items[i]);
+                    System.out.println((i + 1) + "." + tasks[i]);
                 }
                 continue;
             }
 
-            items[count] = input;
+            if(input.startsWith("mark ")) {
+                int index = Integer.parseInt(input.substring(5).trim()) - 1;//0-based
+                tasks[index].markAsDone();
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.println("  " + tasks[index]);
+                continue;
+            }
+
+            if(input.startsWith("unmark ")) {
+                int index = Integer.parseInt(input.substring(7).trim()) - 1;//0-based
+                tasks[index].markAsNotDone();
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.println("  " + tasks[index]);
+                continue;
+            }
+
+            tasks[count] = new Task(input);
+            System.out.println("added: " + input);
             count++;
 
-            // Echo the input
-            System.out.println("added:" + input);
         }
     }
 }
