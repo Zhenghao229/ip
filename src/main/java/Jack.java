@@ -1,8 +1,8 @@
 import java.util.*;
 
-public class jack {
+public class Jack {
     private static void printError(String msg) {
-        System.out.println("OOPS!!!" + msg);
+        System.out.println("OOPS!!! " + msg);
     }
 
     private static int parseTaskNumber(String input, String keyword) throws JackException {
@@ -77,8 +77,7 @@ public class jack {
         Scanner scanner = new Scanner(System.in);
 
         // storage for tasks
-        Task[] tasks = new Task[100];
-        int count = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         // Greeting
         System.out.println("Hello! I'm Jack.");
@@ -93,8 +92,9 @@ try {
     }
 
     if (input.equals("list")) {
-        for (int i = 0; i < count; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        System.out.println("Here are the tasks in your list:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
         }
         continue;
     }
@@ -103,13 +103,13 @@ try {
         int taskNo = parseTaskNumber(input, "mark");
         int idx = taskNo - 1;//0-based
 
-        if (idx < 0 || idx >= count) {
+        if (idx < 0 || idx >= tasks.size()) {
             throw new JackException("That task number is out of range.");
         }
-
-        tasks[idx].markAsDone();
+        tasks.get(idx).markAsDone();
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks[idx]);
+        System.out.println("  " + tasks.get(idx));
+
         continue;
     }
 
@@ -117,13 +117,13 @@ try {
         int taskNo = parseTaskNumber(input, "unmark");
         int idx = taskNo - 1;
 
-        if (idx < 0 || idx >= count) {
+        if (idx < 0 || idx >= tasks.size()) {
             throw new JackException("That task number is out of range.");
         }
-
-        tasks[idx].markAsNotDone();
+        tasks.get(idx).markAsNotDone();
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks[idx]);
+        System.out.println("  " + tasks.get(idx));
+
         continue;
     }
     /*
@@ -151,13 +151,28 @@ try {
         newTask = new Todo(input);
     }
 */
-    Task newTask = parseTask(input);
-    tasks[count] = newTask;
-    count++;
+    if (input.startsWith("delete")) {
+        int taskNo = parseTaskNumber(input, "delete");
+        int idx = taskNo - 1;
 
+        if (idx < 0 || idx >= tasks.size()) {
+            throw new JackException("That task number is out of range.");
+        }
+
+        Task removed = tasks.remove(idx);
+
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + removed);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        continue;
+    }
+
+    Task newTask = parseTask(input);
+    tasks.add(newTask);
     System.out.println("Got it. I've added this task:");
     System.out.println("  " + newTask);
-    System.out.println("Now you have " + count + " tasks in the list.");
+    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+
 } catch (JackException e){
     printError(e.getMessage());
 }
