@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Jack {
     private static void printError(String msg) {
@@ -37,15 +39,20 @@ public class Jack {
         if (input.startsWith("deadline ")) {
             String rest = input.substring(9).trim();
             if (!rest.contains(" /by ")) {
-                throw new JackException("Deadline format: deadline <description> /by <when>");
+                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
             }
             String[] parts = rest.split(" /by ", 2);
             String desc = parts[0].trim();
-            String by = parts[1].trim();
-            if (desc.isEmpty() || by.isEmpty()) {
-                throw new JackException("Deadline format: deadline <description> /by <when>");
+            String byStr = parts[1].trim();
+            if (desc.isEmpty() || byStr.isEmpty()) {
+                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
             }
-            return new Deadline(desc, by);
+            try {
+                LocalDate by = LocalDate.parse(byStr); // expects yyyy-MM-dd
+                return new Deadline(desc, by);
+            } catch (DateTimeParseException e) {
+                throw new JackException("Date must be in yyyy-MM-dd format, e.g. 2019-10-15");
+            }
         }
 
         if (input.equals("event")) {
@@ -132,7 +139,7 @@ public class Jack {
                     continue;
                 }
 
-                if (input.startsWith("delete")) {
+                if (input.startsWith("delete ")) {
                     int taskNo = parseTaskNumber(input, "delete");
                     int idx = taskNo - 1;
 
@@ -145,15 +152,17 @@ public class Jack {
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                     continue;
                 }
+
                 Task newTask = parseTask(input);
                 tasks.add(newTask);
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + newTask);
                 System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+
             } catch (JackException e){
                 printError(e.getMessage());
             }
-            scanner.close();
         }
+        scanner.close();
     }
 }

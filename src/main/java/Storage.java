@@ -1,6 +1,8 @@
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Storage {
     private final Path filePath;
@@ -13,7 +15,6 @@ public class Storage {
         ArrayList<Task> tasks = new ArrayList<>();
 
         if (Files.notExists(filePath)) {
-            // file (or folder) not there yet → treat as empty list
             return tasks;
         }
 
@@ -32,7 +33,6 @@ public class Storage {
 
     public void save(ArrayList<Task> tasks) throws JackException {
         try {
-            // ensure folder exists (data/)
             Path parent = filePath.getParent();
             if (parent != null) Files.createDirectories(parent);
 
@@ -48,7 +48,6 @@ public class Storage {
 
     private Task parseLine(String line) throws JackException {
         String[] parts = line.split("\\s*\\|\\s*");
-        // parts[0] = type, parts[1] = done, parts[2...] = fields
 
         if (parts.length < 3) {
             throw new JackException("Save file is corrupted: " + line);
@@ -62,32 +61,37 @@ public class Storage {
             case "T":
                 task = new Todo(parts[2]);
                 break;
+
             case "D":
                 if (parts.length < 4) throw new JackException("Bad deadline line: " + line);
-                task = new Deadline(parts[2], parts[3]);
+                try {
+                    LocalDate by = LocalDate.parse(parts[3]); // stored as yyyy-MM-dd
+                    task = new Deadline(parts[2], by);
+                } catch (DateTimeParseException e) {
+                    throw new JackException("Bad date in save file: " + parts[3]);
+                }
                 break;
+
             case "E":
                 if (parts.length < 5) throw new JackException("Bad event line: " + line);
                 task = new Event(parts[2], parts[3], parts[4]);
                 break;
+
             default:
                 throw new JackException("Unknown task type in file: " + type);
         }
 
-        if (isDone) task.markAsDone(); // use your existing methods
+        if (isDone) task.markAsDone();
         return task;
     }
 
     private String toLine(Task t) throws JackException {
-        // You must implement a way to know task type + its extra fields
-        // Easiest: use instanceof
-
-        String done = t.isDone() ? "1" : "0"; // you need isDone() getter in Task
+        String done = t.isDone() ? "1" : "0";
 
         if (t instanceof Todo) {
             return "T | " + done + " | " + t.getDescription();
         } else if (t instanceof Deadline d) {
-            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy();
+            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy(); // yyyy-MM-dd
         } else if (t instanceof Event e) {
             return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
         } else {
