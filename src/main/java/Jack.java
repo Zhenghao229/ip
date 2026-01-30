@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Jack {
     private static void printError(String msg) {
@@ -77,7 +78,16 @@ public class Jack {
         Scanner scanner = new Scanner(System.in);
 
         // storage for tasks
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage("data/jack.txt");
+        ArrayList<Task> tasks;
+
+        // Load at startup (Level 7)
+        try {
+            tasks = storage.load();   // load tasks from file
+        } catch (JackException e) {
+            printError(e.getMessage()); // if file missing/corrupt
+            tasks = new ArrayList<>();
+        }
 
         // Greeting
         System.out.println("Hello! I'm Jack.");
@@ -85,98 +95,65 @@ public class Jack {
 
         while (true) {
             String input = scanner.nextLine().trim();
-try {
-    if (input.equals("bye")) {
-        System.out.println("Bye. Hope to see you again soon!");
-        break;
-    }
+            try {
+                if (input.equals("bye")) {
+                    System.out.println("Bye. Hope to see you again soon!");
+                    break;
+                }
 
-    if (input.equals("list")) {
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
-        }
-        continue;
-    }
+                if (input.equals("list")) {
+                    System.out.println("Here are the tasks in your list:");
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + ". " + tasks.get(i));
+                    }
+                    continue;
+                }
+                if (input.startsWith("mark ")) {
+                    int taskNo = parseTaskNumber(input, "mark");
+                    int idx = taskNo - 1;//0-based
 
-    if (input.startsWith("mark ")) {
-        int taskNo = parseTaskNumber(input, "mark");
-        int idx = taskNo - 1;//0-based
+                    if (idx < 0 || idx >= tasks.size()) {
+                        throw new JackException("That task number is out of range.");
+                    }
+                    tasks.get(idx).markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks.get(idx));
+                    continue;
+                }
+                if (input.startsWith("unmark ")) {
+                    int taskNo = parseTaskNumber(input, "unmark");
+                    int idx = taskNo - 1;
+                    if (idx < 0 || idx >= tasks.size()) {
+                        throw new JackException("That task number is out of range.");
+                    }
+                    tasks.get(idx).markAsNotDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks.get(idx));
+                    continue;
+                }
 
-        if (idx < 0 || idx >= tasks.size()) {
-            throw new JackException("That task number is out of range.");
-        }
-        tasks.get(idx).markAsDone();
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + tasks.get(idx));
+                if (input.startsWith("delete")) {
+                    int taskNo = parseTaskNumber(input, "delete");
+                    int idx = taskNo - 1;
 
-        continue;
-    }
-
-    if (input.startsWith("unmark ")) {
-        int taskNo = parseTaskNumber(input, "unmark");
-        int idx = taskNo - 1;
-
-        if (idx < 0 || idx >= tasks.size()) {
-            throw new JackException("That task number is out of range.");
-        }
-        tasks.get(idx).markAsNotDone();
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + tasks.get(idx));
-
-        continue;
-    }
-    /*
-    //-----Level 4------------
-    Task newTask;
-
-    if (input.startsWith("todo ")) {
-        String desc = input.substring(5).trim();
-        newTask = new Todo(desc);
-    } else if (input.startsWith("deadline ")) {
-        String rest = input.substring(9).trim();
-        String[] parts = rest.split(" /by ", 2);
-        String desc = parts[0].trim();
-        String by = parts[1].trim();
-        newTask = new Deadline(desc, by);
-    } else if (input.startsWith("event ")) {
-        String rest = input.substring(6).trim();
-        String[] p1 = rest.split(" /from ", 2);
-        String desc = p1[0].trim();
-        String[] p2 = p1[1].split(" /to ", 2);
-        String from = p2[0].trim();
-        String to = p2[1].trim();
-        newTask = new Event(desc, from, to);
-    } else {
-        newTask = new Todo(input);
-    }
-*/
-    if (input.startsWith("delete")) {
-        int taskNo = parseTaskNumber(input, "delete");
-        int idx = taskNo - 1;
-
-        if (idx < 0 || idx >= tasks.size()) {
-            throw new JackException("That task number is out of range.");
-        }
-
-        Task removed = tasks.remove(idx);
-
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + removed);
-        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        continue;
-    }
-
-    Task newTask = parseTask(input);
-    tasks.add(newTask);
-    System.out.println("Got it. I've added this task:");
-    System.out.println("  " + newTask);
-    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-
-} catch (JackException e){
-    printError(e.getMessage());
-}
-
+                    if (idx < 0 || idx >= tasks.size()) {
+                        throw new JackException("That task number is out of range.");
+                    }
+                    Task removed = tasks.remove(idx);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removed);
+                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                    continue;
+                }
+                Task newTask = parseTask(input);
+                tasks.add(newTask);
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + newTask);
+                System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+            } catch (JackException e){
+                printError(e.getMessage());
+            }
+            scanner.close();
         }
     }
 }
