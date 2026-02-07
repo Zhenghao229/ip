@@ -1,168 +1,47 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 public class Jack {
-    private static void printError(String msg) {
-        System.out.println("OOPS!!! " + msg);
-    }
+    private final Ui ui;
+    private final Storage storage;
+    private final TaskList tasks;
 
-    private static int parseTaskNumber(String input, String keyword) throws JackException {
-        String numberPart = input.substring(keyword.length()).trim(); // after "mark " or "unmark "
-        if (numberPart.isEmpty()) {
-            throw new JackException("Please provide a task number, e.g. " + keyword.trim() + " 2");
-        }
+    public Jack(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+
+        TaskList loadedTasks;
         try {
-            return Integer.parseInt(numberPart);
-        } catch (NumberFormatException e) {
-            throw new JackException("Task number must be a number, e.g. " + keyword.trim() + " 2");
-        }
-    }
-
-    private static Task parseTask(String input) throws JackException {
-
-        if (input.equals("todo")) {
-            throw new JackException("The description of a todo cannot be empty.");
-        }
-        if (input.startsWith("todo ")) {
-            String desc = input.substring(5).trim();
-            if (desc.isEmpty()) {
-                throw new JackException("The description of a todo cannot be empty.");
-            }
-            return new Todo(desc);
-        }
-
-        if (input.equals("deadline")) {
-            throw new JackException("The description of a deadline cannot be empty.");
-        }
-        if (input.startsWith("deadline ")) {
-            String rest = input.substring(9).trim();
-            if (!rest.contains(" /by ")) {
-                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
-            }
-            String[] parts = rest.split(" /by ", 2);
-            String desc = parts[0].trim();
-            String byStr = parts[1].trim();
-            if (desc.isEmpty() || byStr.isEmpty()) {
-                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
-            }
-            try {
-                LocalDate by = LocalDate.parse(byStr); // expects yyyy-MM-dd
-                return new Deadline(desc, by);
-            } catch (DateTimeParseException e) {
-                throw new JackException("Date must be in yyyy-MM-dd format, e.g. 2019-10-15");
-            }
-        }
-
-        if (input.equals("event")) {
-            throw new JackException("The description of an event cannot be empty.");
-        }
-        if (input.startsWith("event ")) {
-            String rest = input.substring(6).trim();
-            if (!rest.contains(" /from ") || !rest.contains(" /to ")) {
-                throw new JackException("Event format: event <description> /from <start> /to <end>");
-            }
-
-            String[] p1 = rest.split(" /from ", 2);
-            String desc = p1[0].trim();
-            String[] p2 = p1[1].split(" /to ", 2);
-            String from = p2[0].trim();
-            String to = p2[1].trim();
-
-            if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new JackException("Event format: event <description> /from <start> /to <end>");
-            }
-            return new Event(desc, from, to);
-        }
-
-        // unknown command
-        throw new JackException("I'm sorry, but I don't know what that means :-(");
-    }
-
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        // storage for tasks
-        Storage storage = new Storage("data/jack.txt");
-        ArrayList<Task> tasks;
-
-        // Load at startup (Level 7)
-        try {
-            tasks = storage.load();   // load tasks from file
+            loadedTasks = new TaskList(storage.load());
         } catch (JackException e) {
-            printError(e.getMessage()); // if file missing/corrupt
-            tasks = new ArrayList<>();
+            ui.showError(e.getMessage());
+            loadedTasks = new TaskList();
         }
+        tasks = loadedTasks;
+    }
 
-        // Greeting
-        System.out.println("Hello! I'm Jack.");
-        System.out.println("What can I do for you?");
+    public void run() {
+        ui.showWelcome();
 
         while (true) {
-            String input = scanner.nextLine().trim();
             try {
+                String input = ui.readCommand();
+                ui.showLine();
+
                 if (input.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
+                    ui.showGoodbye();
                     break;
                 }
 
-                if (input.equals("list")) {
-                    System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + ". " + tasks.get(i));
-                    }
-                    continue;
-                }
-                if (input.startsWith("mark ")) {
-                    int taskNo = parseTaskNumber(input, "mark");
-                    int idx = taskNo - 1;//0-based
+                String response = Parser.handle(input, tasks, storage);
+                ui.showMessage(response);
 
-                    if (idx < 0 || idx >= tasks.size()) {
-                        throw new JackException("That task number is out of range.");
-                    }
-                    tasks.get(idx).markAsDone();
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks.get(idx));
-                    continue;
-                }
-                if (input.startsWith("unmark ")) {
-                    int taskNo = parseTaskNumber(input, "unmark");
-                    int idx = taskNo - 1;
-                    if (idx < 0 || idx >= tasks.size()) {
-                        throw new JackException("That task number is out of range.");
-                    }
-                    tasks.get(idx).markAsNotDone();
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(idx));
-                    continue;
-                }
-
-                if (input.startsWith("delete ")) {
-                    int taskNo = parseTaskNumber(input, "delete");
-                    int idx = taskNo - 1;
-
-                    if (idx < 0 || idx >= tasks.size()) {
-                        throw new JackException("That task number is out of range.");
-                    }
-                    Task removed = tasks.remove(idx);
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removed);
-                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                    continue;
-                }
-
-                Task newTask = parseTask(input);
-                tasks.add(newTask);
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + newTask);
-                System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-
-            } catch (JackException e){
-                printError(e.getMessage());
+            } catch (JackException e) {
+                ui.showError(e.getMessage());
+            } finally {
+                ui.showLine();
             }
         }
-        scanner.close();
+    }
+
+    public static void main(String[] args) {
+        new Jack("data/jack.txt").run();
     }
 }

@@ -3,7 +3,7 @@ public class Task {
     protected boolean isDone;
     protected TaskType type;
 
-    public Task(TaskType type,String description) {
+    public Task(TaskType type, String description) {
         this.type = type;
         this.description = description;
         this.isDone = false;
@@ -17,8 +17,8 @@ public class Task {
         this.isDone = false;
     }
 
-    public  String getStatusIcon() {
-        return (isDone? "X" : " "); //mark done task with X
+    public String getStatusIcon() {
+        return (isDone ? "X" : " "); //mark done task with X
     }
 
     public boolean isDone() {
@@ -33,6 +33,4 @@ public class Task {
     public String toString() {
         return type.getSymbol() + "[" + getStatusIcon() + "] " + description;
     }
-
-
 }
