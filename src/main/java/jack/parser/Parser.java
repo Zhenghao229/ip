@@ -1,3 +1,13 @@
+package jack.parser;
+
+import jack.JackException;
+import jack.task.TaskList;
+import jack.command.*;
+import jack.task.Deadline;
+import jack.task.Event;
+import jack.task.Task;
+import jack.task.Todo;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -26,18 +36,18 @@ public class Parser {
         }
 
         // add tasks
-        Task t = parseTask(input); // existing parseTask that returns Todo/Deadline/Event
+        Task t = parseTask(input); // existing parseTask that returns Jack.Todo/Jack.Deadline/Jack.Event
         return new AddCommand(t);
     }
     private static int parseTaskNumber(String input, String keyword) throws JackException {
         String numberPart = input.substring(keyword.length()).trim();
         if (numberPart.isEmpty()) {
-            throw new JackException("Please provide a task number, e.g. " + keyword + " 2");
+            throw new JackException("Please provide a jack.task number, e.g. " + keyword + " 2");
         }
         try {
             return Integer.parseInt(numberPart);
         } catch (NumberFormatException e) {
-            throw new JackException("Task number must be a number, e.g. " + keyword + " 2");
+            throw new JackException("Jack.Task number must be a number, e.g. " + keyword + " 2");
         }
     }
 
@@ -57,13 +67,13 @@ public class Parser {
         if (input.startsWith("deadline ")) {
             String rest = input.substring(9).trim();
             if (!rest.contains(" /by ")) {
-                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
+                throw new JackException("Jack.Deadline format: deadline <description> /by <yyyy-MM-dd>");
             }
             String[] parts = rest.split(" /by ", 2);
             String desc = parts[0].trim();
             String byStr = parts[1].trim();
             if (desc.isEmpty() || byStr.isEmpty()) {
-                throw new JackException("Deadline format: deadline <description> /by <yyyy-MM-dd>");
+                throw new JackException("Jack.Deadline format: deadline <description> /by <yyyy-MM-dd>");
             }
             try {
                 LocalDate by = LocalDate.parse(byStr);
@@ -79,7 +89,7 @@ public class Parser {
         if (input.startsWith("event ")) {
             String rest = input.substring(6).trim();
             if (!rest.contains(" /from ") || !rest.contains(" /to ")) {
-                throw new JackException("Event format: event <description> /from <start> /to <end>");
+                throw new JackException("Jack.Event format: event <description> /from <start> /to <end>");
             }
             String[] p1 = rest.split(" /from ", 2);
             String desc = p1[0].trim();
@@ -88,7 +98,7 @@ public class Parser {
             String to = p2[1].trim();
 
             if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new JackException("Event format: event <description> /from <start> /to <end>");
+                throw new JackException("Jack.Event format: event <description> /from <start> /to <end>");
             }
             return new Event(desc, from, to);
         }
@@ -98,7 +108,7 @@ public class Parser {
 
     private static String formatList(TaskList tasks) {
         if (tasks.size() == 0) {
-            return "Your task list is empty.";
+            return "Your jack.task list is empty.";
         }
         StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
         for (int i = 0; i < tasks.size(); i++) {

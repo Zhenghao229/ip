@@ -1,3 +1,5 @@
+package jack.task;
+
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -18,7 +20,7 @@ public class Task {
     }
 
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); //mark done task with X
+        return (isDone ? "X" : " "); //mark done jack.task with X
     }
 
     public boolean isDone() {

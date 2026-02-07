@@ -1,3 +1,11 @@
+package jack.storage;
+
+import jack.JackException;
+import jack.task.Deadline;
+import jack.task.Event;
+import jack.task.Task;
+import jack.task.Todo;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -78,7 +86,7 @@ public class Storage {
                 break;
 
             default:
-                throw new JackException("Unknown task type in file: " + type);
+                throw new JackException("Unknown jack.task type in file: " + type);
         }
 
         if (isDone) task.markAsDone();
@@ -95,7 +103,7 @@ public class Storage {
         } else if (t instanceof Event e) {
             return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
         } else {
-            throw new JackException("Unknown task class: " + t.getClass());
+            throw new JackException("Unknown jack.task class: " + t.getClass());
         }
     }
 }

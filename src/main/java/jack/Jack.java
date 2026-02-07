@@ -1,3 +1,11 @@
+package jack;
+
+import jack.command.Command;
+import jack.parser.Parser;
+import jack.storage.Storage;
+import jack.task.TaskList;
+import jack.ui.Ui;
+
 public class Jack {
     private final Ui ui;
     private final Storage storage;

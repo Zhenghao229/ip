@@ -1,3 +1,7 @@
+package jack.task;
+
+import jack.JackException;
+
 import java.util.ArrayList;
 
 public class TaskList {
@@ -27,14 +31,14 @@ public class TaskList {
         return tasks.remove(index);
     }
 
-    // If Storage needs the raw ArrayList to save
+    // If Jack.Storage needs the raw ArrayList to save
     public ArrayList<Task> getInternalList() {
         return tasks;
     }
 
     public String toDisplayString() {
         if (size() == 0) {
-            return "Your task list is empty.";
+            return "Your jack.task list is empty.";
         }
         StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
         for (int i = 0; i < size(); i++) {
@@ -45,7 +49,7 @@ public class TaskList {
 
     public void checkIndex(int idx) throws JackException {
         if (idx < 0 || idx >= size()) {
-            throw new JackException("That task number is out of range.");
+            throw new JackException("That jack.task number is out of range.");
         }
     }
 

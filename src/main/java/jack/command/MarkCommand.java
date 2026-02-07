@@ -1,3 +1,10 @@
+package jack.command;
+
+import jack.JackException;
+import jack.storage.Storage;
+import jack.task.TaskList;
+import jack.ui.Ui;
+
 public class MarkCommand extends Command {
     private final int index; // 0-based
 
@@ -10,6 +17,6 @@ public class MarkCommand extends Command {
         tasks.checkIndex(index);
         tasks.get(index).markAsDone();
         storage.save(tasks.getInternalList());
-        return "Nice! I've marked this task as done:\n  " + tasks.get(index);
+        return "Nice! I've marked this jack.task as done:\n  " + tasks.get(index);
     }
 }

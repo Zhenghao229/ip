@@ -1,4 +1,4 @@
-# Jack User Guide
+# jack.jack User Guide
 
 // Update the title above to match the actual product name
 
