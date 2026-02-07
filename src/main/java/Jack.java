@@ -19,20 +19,18 @@ public class Jack {
 
     public void run() {
         ui.showWelcome();
+        boolean isExit = false;
 
-        while (true) {
+        while (!isExit) {
             try {
-                String input = ui.readCommand();
+                String fullCommand = ui.readCommand();
                 ui.showLine();
 
-                if (input.equals("bye")) {
-                    ui.showGoodbye();
-                    break;
-                }
+                Command c = Parser.parse(fullCommand);
+                String result = c.execute(tasks, ui, storage);
+                ui.showMessage(result);
 
-                String response = Parser.handle(input, tasks, storage);
-                ui.showMessage(response);
-
+                isExit = c.isExit();
             } catch (JackException e) {
                 ui.showError(e.getMessage());
             } finally {

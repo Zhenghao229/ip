@@ -3,50 +3,32 @@ import java.time.format.DateTimeParseException;
 
 public class Parser {
 
-    public static String handle(String input, TaskList tasks, Storage storage) throws JackException {
-        if (input.equals("list")) {
-            return formatList(tasks);
-        }
+    public static Command parse(String input) throws JackException {
+        input = input.trim();
 
+        if (input.equals("bye")) {
+            return new ExitCommand();
+        }
+        if (input.equals("list")) {
+            return new ListCommand();
+        }
         if (input.startsWith("mark ")) {
             int idx = parseTaskNumber(input, "mark") - 1;
-            checkIndex(idx, tasks);
-            tasks.get(idx).markAsDone();
-            storage.save(tasks.getInternalList());
-            return "Nice! I've marked this task as done:\n  " + tasks.get(idx);
+            return new MarkCommand(idx);
         }
-
         if (input.startsWith("unmark ")) {
             int idx = parseTaskNumber(input, "unmark") - 1;
-            checkIndex(idx, tasks);
-            tasks.get(idx).markAsNotDone();
-            storage.save(tasks.getInternalList());
-            return "OK, I've marked this task as not done yet:\n  " + tasks.get(idx);
+            return new UnmarkCommand(idx);
         }
-
         if (input.startsWith("delete ")) {
             int idx = parseTaskNumber(input, "delete") - 1;
-            checkIndex(idx, tasks);
-            Task removed = tasks.remove(idx);
-            storage.save(tasks.getInternalList());
-            return "Noted. I've removed this task:\n  " + removed
-                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+            return new DeleteCommand(idx);
         }
 
-        // otherwise: add task (todo/deadline/event)
-        Task newTask = parseTask(input);
-        tasks.add(newTask);
-        storage.save(tasks.getInternalList());
-        return "Got it. I've added this task:\n  " + newTask
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+        // add tasks
+        Task t = parseTask(input); // existing parseTask that returns Todo/Deadline/Event
+        return new AddCommand(t);
     }
-
-    private static void checkIndex(int idx, TaskList tasks) throws JackException {
-        if (idx < 0 || idx >= tasks.size()) {
-            throw new JackException("That task number is out of range.");
-        }
-    }
-
     private static int parseTaskNumber(String input, String keyword) throws JackException {
         String numberPart = input.substring(keyword.length()).trim();
         if (numberPart.isEmpty()) {
