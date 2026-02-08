@@ -11,8 +11,19 @@ import jack.task.Todo;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parses raw user input into executable {@link Command} objects.
+ * Supported commands include listing tasks, marking/unmarking, deleting, and adding tasks.
+ */
 public class Parser {
 
+    /**
+     * Converts a user input string into the corresponding {@link Command}.
+     *
+     * @param input Raw user input.
+     * @return A {@link Command} representing the action requested by the user.
+     * @throws JackException If the input is invalid or does not match any supported command format.
+     */
     public static Command parse(String input) throws JackException {
         input = input.trim();
 

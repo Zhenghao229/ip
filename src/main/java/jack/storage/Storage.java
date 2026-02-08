@@ -12,13 +12,28 @@ import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Handles loading tasks from disk and saving tasks to disk.
+ * Tasks are stored as lines of text in a simple pipe-delimited format.
+ */
 public class Storage {
     private final Path filePath;
 
+    /**
+     * Handles loading tasks from disk and saving tasks to disk.
+     * Tasks are stored as lines of text in a simple pipe-delimited format.
+     */
     public Storage(String relativePath) {
         this.filePath = Paths.get(relativePath);
     }
 
+    /**
+     * Loads tasks from the save file.
+     * If the file does not exist, returns an empty list.
+     *
+     * @return An {@link ArrayList} of tasks loaded from disk.
+     * @throws JackException If the file exists but cannot be read or contains invalid data.
+     */
     public ArrayList<Task> load() throws JackException {
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -39,6 +54,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves the given list of tasks to the save file.
+     * Creates parent directories if necessary.
+     *
+     * @param tasks The task list to be saved.
+     * @throws JackException If the file cannot be written.
+     */
     public void save(ArrayList<Task> tasks) throws JackException {
         try {
             Path parent = filePath.getParent();
