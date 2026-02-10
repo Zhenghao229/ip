@@ -45,6 +45,13 @@ public class Parser {
             int idx = parseTaskNumber(input, "delete") - 1;
             return new DeleteCommand(idx);
         }
+        if (input.startsWith("find ")) {
+            String keyword = input.substring(5).trim();
+            if (keyword.isEmpty()) {
+                throw new JackException("Please provide a keyword to find.");
+            }
+            return new FindCommand(keyword);
+        }
 
         // add tasks
         Task t = parseTask(input); // existing parseTask that returns Jack.Todo/Jack.Deadline/Jack.Event

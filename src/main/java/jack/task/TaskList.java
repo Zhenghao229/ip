@@ -1,8 +1,8 @@
 package jack.task;
 
 import jack.JackException;
-
 import java.util.ArrayList;
+
 
 /**
  * Represents a list of tasks in the application.
@@ -103,5 +103,25 @@ public class TaskList {
         }
     }
 
+    /**
+     * Returns a formatted string of tasks whose descriptions contain the keyword.
+     */
+    public String findToDisplayString(String keyword) {
+        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        int count = 0;
 
+        for (int i = 0; i < size(); i++) {
+            Task t = get(i);
+            if (t.containsKeyword(keyword)) {
+                count++;
+                sb.append(count).append(". ").append(t).append("\n");
+            }
+        }
+
+        if (count == 0) {
+            return "No matching tasks found.";
+        }
+
+        return sb.toString().trim();
+    }
 }

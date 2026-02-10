@@ -2,6 +2,7 @@ package jack.ui;
 
 import java.util.Scanner;
 
+
 /**
  * Handles user interaction via the console.
  * Responsible for reading user commands and printing messages to the user.
@@ -26,11 +27,6 @@ public class Ui {
         return scanner.nextLine().trim();
     }
 
-    /**
-     * Reads the next line of user input.
-     *
-     * @return The trimmed user input string.
-     */
     public void showLine() {
         System.out.println("____________________________________________");
     }
