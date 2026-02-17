@@ -1,3 +1,4 @@
 D | 0 | return book | 2026-02-10
 E | 1 | CS2103 lecture | 2pm | 4pm
-T | 0 | read book
+T | 0 | return book
+T | 0 | read book 4
