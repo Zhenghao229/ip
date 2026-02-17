@@ -1,8 +1,8 @@
-package jack.ui;
+package jack;
 
 import java.io.IOException;
 
-import jack.Jack;
+import jack.ui.MainWindow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

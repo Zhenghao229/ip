@@ -47,7 +47,17 @@ public class Jack {
         }
     }
 
+    public String getResponse(String input) {
+        try {
+            Command c = Parser.parse(input);
+            return c.execute(tasks, ui, storage);
+        } catch (Exception e) {
+            return "OOPS!!! " + e.getMessage();
+        }
+    }
+
     public static void main(String[] args) {
         new Jack("data/jack.txt").run();
     }
+
 }

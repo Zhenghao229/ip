@@ -1,4 +1,4 @@
-package jack.ui;
+package jack;
 
 import javafx.application.Application;
 
