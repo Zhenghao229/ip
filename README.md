@@ -1,6 +1,8 @@
 # jack.jack project template
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it. 
+
+Admin: merged PR in own fork.
 
 ## Setting up in Intellij
 
