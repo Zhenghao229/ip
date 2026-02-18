@@ -1,6 +1,6 @@
-package jack;
+package jack.ui;
 
-import jack.ui.DialogBox;
+import jack.Jack;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 /**
  * Controller for the main GUI.
  */
@@ -24,14 +25,16 @@ public class MainWindow extends AnchorPane {
     private Jack jack;
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/labi.png"));
-    private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/jack.png"));
+    private Image jackImage = new Image(this.getClass().getResourceAsStream("/images/jack.png"));
 
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Jack instance */
+    /**
+     * Injects the Jack instance
+     */
     public void setJack(Jack j) {
         jack = j;
     }
@@ -46,7 +49,7 @@ public class MainWindow extends AnchorPane {
         String response = jack.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, dukeImage)
+                DialogBox.getDukeDialog(response, jackImage)
         );
         userInput.clear();
     }
