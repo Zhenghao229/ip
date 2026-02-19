@@ -1,6 +1,6 @@
 package jack.command;
 
-import jack.*;
+import jack.JackException;
 import jack.storage.Storage;
 import jack.task.Task;
 import jack.task.TaskList;

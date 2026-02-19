@@ -1,23 +1,38 @@
 package jack.task;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Represents a deadline task with a due date.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter OUT_FMT = DateTimeFormatter.ofPattern("MMM dd yyyy");
-    private final LocalDate by;
+    private static final DateTimeFormatter OUT_FMT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
+
+    private LocalDateTime by;
 
     /**
      * Creates a {@code Deadline} task with a description and due date.
      *
      * @param description The description of the deadline task.
-     * @param by The due date of the task.
+     * @param by          The due date of the task.
      */
-    public Deadline(String description, LocalDate by) {
-        super(TaskType.DEADLINE,description);
+    public Deadline(String description, LocalDateTime by) {
+        super(TaskType.DEADLINE, description);
+        this.by = by;
+    }
+
+    /**
+     * Returns the due date of this deadline task.
+     *
+     * @return Due date as a {@link LocalDateTime}.
+     */
+    public LocalDateTime getBy() {
+        return by;
+    }
+
+    public void setBy(LocalDateTime by) {
         this.by = by;
     }
 
@@ -29,15 +44,6 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return super.toString() + " (by: " + by.format(OUT_FMT) + ")";
-    }
-
-    /**
-     * Returns the due date of this deadline task.
-     *
-     * @return Due date as a {@link LocalDate}.
-     */
-    public LocalDate getBy() {
-        return by;
     }
 }
 

@@ -1,21 +1,32 @@
 package jack.parser;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import jack.JackException;
-import jack.task.TaskList;
-import jack.command.*;
+import jack.command.AddCommand;
+import jack.command.Command;
+import jack.command.DeleteCommand;
+import jack.command.ExitCommand;
+import jack.command.FindCommand;
+import jack.command.ListCommand;
+import jack.command.MarkCommand;
+import jack.command.UnmarkCommand;
+import jack.command.UpdateCommand;
 import jack.task.Deadline;
 import jack.task.Event;
 import jack.task.Task;
 import jack.task.Todo;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 /**
  * Parses raw user input into executable {@link Command} objects.
  * Supported commands include listing tasks, marking/unmarking, deleting, and adding tasks.
  */
 public class Parser {
+
+    private static final DateTimeFormatter IN_FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
      * Converts a user input string into the corresponding {@link Command}.
@@ -25,6 +36,7 @@ public class Parser {
      * @throws JackException If the input is invalid or does not match any supported command format.
      */
     public static Command parse(String input) throws JackException {
+        assert input != null : "User input should not be null";
         input = input.trim();
 
         if (input.equals("bye")) {
@@ -53,11 +65,17 @@ public class Parser {
             return new FindCommand(keyword);
         }
 
+        if (input.startsWith("update ")) {
+            return parseUpdate(input);
+        }
+
         // add tasks
         Task t = parseTask(input); // existing parseTask that returns Jack.Todo/Jack.Deadline/Jack.Event
         return new AddCommand(t);
     }
+
     private static int parseTaskNumber(String input, String keyword) throws JackException {
+        assert input != null && keyword != null : "Input and keyword must not be null";
         String numberPart = input.substring(keyword.length()).trim();
         if (numberPart.isEmpty()) {
             throw new JackException("Please provide a jack.task number, e.g. " + keyword + " 2");
@@ -75,7 +93,9 @@ public class Parser {
         }
         if (input.startsWith("todo ")) {
             String desc = input.substring(5).trim();
-            if (desc.isEmpty()) throw new JackException("The description of a todo cannot be empty.");
+            if (desc.isEmpty()) {
+                throw new JackException("The description of a todo cannot be empty.");
+            }
             return new Todo(desc);
         }
 
@@ -85,20 +105,22 @@ public class Parser {
         if (input.startsWith("deadline ")) {
             String rest = input.substring(9).trim();
             if (!rest.contains(" /by ")) {
-                throw new JackException("Jack.Deadline format: deadline <description> /by <yyyy-MM-dd>");
+                throw new JackException(
+                        "Deadline format: deadline <description> /by <yyyy-MM-dd HH:mm>"
+                );
             }
             String[] parts = rest.split(" /by ", 2);
             String desc = parts[0].trim();
             String byStr = parts[1].trim();
+
             if (desc.isEmpty() || byStr.isEmpty()) {
-                throw new JackException("Jack.Deadline format: deadline <description> /by <yyyy-MM-dd>");
+                throw new JackException(
+                        "Deadline format: deadline <description> /by <yyyy-MM-dd HH:mm>"
+                );
             }
-            try {
-                LocalDate by = LocalDate.parse(byStr);
-                return new Deadline(desc, by);
-            } catch (DateTimeParseException e) {
-                throw new JackException("Date must be in yyyy-MM-dd format, e.g. 2019-10-15");
-            }
+
+            LocalDateTime by = parseDateTime(byStr, "/by");
+            return new Deadline(desc, by);
         }
 
         if (input.equals("event")) {
@@ -107,31 +129,118 @@ public class Parser {
         if (input.startsWith("event ")) {
             String rest = input.substring(6).trim();
             if (!rest.contains(" /from ") || !rest.contains(" /to ")) {
-                throw new JackException("Jack.Event format: event <description> /from <start> /to <end>");
+                throw new JackException(
+                        "Event format: event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>"
+                );
             }
+
             String[] p1 = rest.split(" /from ", 2);
             String desc = p1[0].trim();
             String[] p2 = p1[1].split(" /to ", 2);
-            String from = p2[0].trim();
-            String to = p2[1].trim();
+            String fromStr = p2[0].trim();
+            String toStr = p2[1].trim();
 
-            if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new JackException("Jack.Event format: event <description> /from <start> /to <end>");
+            if (desc.isEmpty() || fromStr.isEmpty() || toStr.isEmpty()) {
+                throw new JackException(
+                        "Event format: event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>"
+                );
             }
+
+            LocalDateTime from = parseDateTime(fromStr, "/from");
+            LocalDateTime to = parseDateTime(toStr, "/to");
+
+            if (to.isBefore(from)) {
+                throw new JackException("Event end time must not be before start time.");
+            }
+
             return new Event(desc, from, to);
         }
 
         throw new JackException("I'm sorry, but I don't know what that means :-(");
     }
 
-    private static String formatList(TaskList tasks) {
-        if (tasks.size() == 0) {
-            return "Your jack.task list is empty.";
+    private static Command parseUpdate(String input) throws JackException {
+        String rest = input.substring("update ".length()).trim();
+        String[] parts = rest.split("\\s+", 2);
+
+        if (parts.length < 2) {
+            throw new JackException(
+                    "Usage: update INDEX /desc TEXT "
+                            + "[/by yyyy-MM-dd HH:mm] "
+                            + "[/from yyyy-MM-dd HH:mm] "
+                            + "[/to yyyy-MM-dd HH:mm]"
+            );
         }
-        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
-        for (int i = 0; i < tasks.size(); i++) {
-            sb.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+
+        int idx = Integer.parseInt(parts[0]) - 1;
+        String args = parts[1].trim();
+
+        String newDesc = extractValue(args, "/desc");
+        String byStr = extractValue(args, "/by");
+        String fromStr = extractValue(args, "/from");
+        String toStr = extractValue(args, "/to");
+
+        LocalDateTime newBy = (byStr == null) ? null : parseDateTime(byStr, "/by");
+        LocalDateTime newFrom = (fromStr == null) ? null : parseDateTime(fromStr, "/from");
+        LocalDateTime newTo = (toStr == null) ? null : parseDateTime(toStr, "/to");
+
+        if (newDesc == null && newBy == null && newFrom == null && newTo == null) {
+            throw new JackException("Nothing to update. Use /desc, /by, /from, /to.");
         }
-        return sb.toString().trim();
+
+        return new UpdateCommand(idx, newDesc, newBy, newFrom, newTo);
+    }
+
+    private static LocalDateTime parseDateTime(String text, String flag) throws JackException {
+        try {
+            return LocalDateTime.parse(text, IN_FMT);
+        } catch (DateTimeParseException e) {
+            throw new JackException("Invalid date/time after " + flag
+                    + ". Use yyyy-MM-dd HH:mm (e.g. 2026-02-10 17:00)");
+        }
+    }
+
+    private static String extractValue(String args, String flag) throws JackException {
+        int start = args.indexOf(flag);
+        if (start == -1) {
+            return null;
+        }
+
+        int valueStart = start + flag.length();
+        if (valueStart >= args.length()) {
+            throw new JackException("Missing value after " + flag);
+        }
+
+        int end = nextFlagPos(args, valueStart);
+        String value = (end == -1) ? args.substring(valueStart) : args.substring(valueStart, end);
+        value = value.trim();
+
+        if (value.isEmpty()) {
+            throw new JackException("Missing value after " + flag);
+        }
+        return value;
+    }
+
+    private static int nextFlagPos(String s, int fromIndex) {
+        int d = s.indexOf(" /desc", fromIndex);
+        int b = s.indexOf(" /by", fromIndex);
+        int f = s.indexOf(" /from", fromIndex);
+        int t = s.indexOf(" /to", fromIndex);
+
+        int min = -1;
+        if (d != -1) {
+            min = d;
+        }
+        if (b != -1 && (min == -1 || b < min)) {
+            min = b;
+        }
+        if (f != -1 && (min == -1 || f < min)) {
+            min = f;
+        }
+        if (t != -1 && (min == -1 || t < min)) {
+            min = t;
+        }
+
+        return min;
     }
 }

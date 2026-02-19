@@ -1,6 +1,7 @@
 package jack.command;
 
-import jack.*;
+
+import jack.JackException;
 import jack.storage.Storage;
 import jack.task.Task;
 import jack.task.TaskList;
@@ -8,8 +9,7 @@ import jack.ui.Ui;
 
 /**
  * Indicates whether this command should terminate the application.
- *
- * @return True if the application should exit, false otherwise.
+ * True if the application should exit, false otherwise.
  */
 public class AddCommand extends Command {
     private final Task task;

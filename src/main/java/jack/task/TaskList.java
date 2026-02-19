@@ -1,12 +1,14 @@
 package jack.task;
 
-import jack.JackException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import jack.JackException;
 
 /**
  * Represents a list of tasks in the application.
  * Provides operations to add, remove, and retrieve tasks.
+ * Support update Operation
  */
 public class TaskList {
     private final ArrayList<Task> tasks;
@@ -123,5 +125,65 @@ public class TaskList {
         }
 
         return sb.toString().trim();
+    }
+
+    /**
+     * Updates selected fields of an existing task (null fields are ignored).
+     *
+     * @param index   0-based task index
+     * @param newDesc new description (nullable)
+     * @param newBy   new deadline date/time (nullable)
+     * @param newFrom new event start date/time (nullable)
+     * @param newTo   new event end date/time (nullable)
+     * @return updated task
+     * @throws JackException if invalid index or invalid update for task type
+     */
+    public Task updateTask(int index, String newDesc, LocalDateTime newBy,
+                           LocalDateTime newFrom, LocalDateTime newTo) throws JackException {
+        checkIndex(index);
+        Task t = get(index);
+
+        boolean changed = false;
+
+        if (newDesc != null) {
+            t.setDescription(newDesc);
+            changed = true;
+        }
+
+        if (newBy != null) {
+            if (!(t instanceof Deadline)) {
+                throw new JackException("Only deadlines can be updated with /by.");
+            }
+
+            Deadline d = (Deadline) t;
+            d.setBy(newBy);
+
+            changed = true;
+        }
+
+        if (newFrom != null || newTo != null) {
+            if (!(t instanceof Event)) {
+                throw new JackException("Only events can be updated with /from and /to.");
+            }
+            Event e = (Event) t;
+            if (newFrom != null) {
+                e.setFrom(newFrom);
+                changed = true;
+            }
+            if (newTo != null) {
+                e.setTo(newTo);
+                changed = true;
+            }
+            // If both present (or after partial update), validate range.
+            if (e.getTo().isBefore(e.getFrom())) {
+                throw new JackException("Event end time must not be before start time.");
+            }
+        }
+
+        if (!changed) {
+            throw new JackException("Nothing to update. Use /desc, /by, /from, /to.");
+        }
+
+        return t;
     }
 }

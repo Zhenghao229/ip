@@ -1,22 +1,30 @@
 package jack.storage;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import jack.JackException;
 import jack.task.Deadline;
 import jack.task.Event;
 import jack.task.Task;
 import jack.task.Todo;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 /**
  * Handles loading tasks from disk and saving tasks to disk.
  * Tasks are stored as lines of text in a simple pipe-delimited format.
  */
 public class Storage {
+    private static final DateTimeFormatter DATE_TIME_FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
     private final Path filePath;
 
     /**
@@ -45,7 +53,9 @@ public class Storage {
             List<String> lines = Files.readAllLines(filePath);
             for (String line : lines) {
                 line = line.trim();
-                if (line.isEmpty()) continue;
+                if (line.isEmpty()) {
+                    continue;
+                }
                 tasks.add(parseLine(line));
             }
             return tasks;
@@ -64,7 +74,9 @@ public class Storage {
     public void save(ArrayList<Task> tasks) throws JackException {
         try {
             Path parent = filePath.getParent();
-            if (parent != null) Files.createDirectories(parent);
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
 
             ArrayList<String> lines = new ArrayList<>();
             for (Task t : tasks) {
@@ -88,31 +100,52 @@ public class Storage {
 
         Task task;
         switch (type) {
-            case "T":
-                task = new Todo(parts[2]);
-                break;
+        case "T":
+            task = new Todo(parts[2]);
+            break;
 
-            case "D":
-                if (parts.length < 4) throw new JackException("Bad deadline line: " + line);
-                try {
-                    LocalDate by = LocalDate.parse(parts[3]); // stored as yyyy-MM-dd
-                    task = new Deadline(parts[2], by);
-                } catch (DateTimeParseException e) {
-                    throw new JackException("Bad date in save file: " + parts[3]);
-                }
-                break;
+        case "D":
+            if (parts.length < 4) {
+                throw new JackException("Bad deadline line: " + line);
+            }
+            try {
+                LocalDateTime by = parseDateTime(parts[3]);
+                task = new Deadline(parts[2], by);
+            } catch (DateTimeParseException e) {
+                throw new JackException("Bad date in save file: " + parts[3]);
+            }
+            break;
 
-            case "E":
-                if (parts.length < 5) throw new JackException("Bad event line: " + line);
-                task = new Event(parts[2], parts[3], parts[4]);
-                break;
+        case "E":
+            if (parts.length < 5) {
+                throw new JackException("Bad event line: " + line);
+            }
+            LocalDateTime from = parseDateTime(parts[3]);
+            LocalDateTime to = parseDateTime(parts[4]);
+            task = new Event(parts[2], from, to);
 
-            default:
-                throw new JackException("Unknown jack.task type in file: " + type);
+            break;
+
+        default:
+            throw new JackException("Unknown jack.task type in file: " + type);
         }
 
-        if (isDone) task.markAsDone();
+        if (isDone) {
+            task.markAsDone();
+        }
         return task;
+    }
+
+    private static LocalDateTime parseDateTime(String text) throws JackException {
+        try {
+            return LocalDateTime.parse(text, DATE_TIME_FMT);
+        } catch (DateTimeParseException e) {
+            try {
+                return LocalDate.parse(text).atStartOfDay();
+            } catch (DateTimeParseException e2) {
+                throw new JackException("Bad date/time in save file: " + text);
+            }
+        }
     }
 
     private String toLine(Task t) throws JackException {
@@ -121,9 +154,13 @@ public class Storage {
         if (t instanceof Todo) {
             return "T | " + done + " | " + t.getDescription();
         } else if (t instanceof Deadline d) {
-            return "D | " + done + " | " + d.getDescription() + " | " + d.getBy(); // yyyy-MM-dd
+            return "D | " + done + " | " + d.getDescription()
+                    + " | " + d.getBy().format(DATE_TIME_FMT);
         } else if (t instanceof Event e) {
-            return "E | " + done + " | " + e.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
+            return "E | " + done + " | " + e.getDescription()
+                    + " | " + e.getFrom().format(DATE_TIME_FMT)
+                    + " | " + e.getTo().format(DATE_TIME_FMT);
+
         } else {
             throw new JackException("Unknown jack.task class: " + t.getClass());
         }

@@ -12,7 +12,7 @@ public class Task {
     /**
      * Creates a task with the given type and description.
      *
-     * @param type The task type (e.g., TODO, DEADLINE, EVENT).
+     * @param type        The task type (e.g., TODO, DEADLINE, EVENT).
      * @param description The description of the task.
      */
     public Task(TaskType type, String description) {
@@ -63,13 +63,16 @@ public class Task {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     /**
      * Returns true if the task description contains the given keyword (case-insensitive).
      */
     public boolean containsKeyword(String keyword) {
         return description.toLowerCase().contains(keyword.toLowerCase());
     }
-
 
     /**
      * Returns a user-friendly string representation of this task.
