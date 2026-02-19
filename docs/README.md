@@ -188,19 +188,6 @@ bye
 | **Exit**     | `bye`                                                                       | Closes the application.                     |
 
 ---
-## Date & Time Format
-
-All date and time inputs must follow:
-
-```
-dd MMM yyyy HH:mm
-```
-
-Example:
-
-```
-26 Feb 2026 20:00
-```
 
 
 
