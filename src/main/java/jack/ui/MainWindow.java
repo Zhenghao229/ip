@@ -27,9 +27,17 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/labi.png"));
     private Image jackImage = new Image(this.getClass().getResourceAsStream("/images/jack.png"));
 
+    /**
+     * Initializes the main window. Runs automatically after FXML is loaded.
+     * Shows a welcome message and binds the scroll pane to the dialog container.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+
+        dialogContainer.getChildren().add(
+                DialogBox.getJackDialog("Hello! I'm Jack. What can I do for you today?", jackImage)
+        );
     }
 
     /**
@@ -52,5 +60,13 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getJackDialog(response, jackImage)
         );
         userInput.clear();
+
+        if (input.trim().equalsIgnoreCase("bye")) {
+            javafx.animation.PauseTransition pause;
+            pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1.0));
+            pause.setOnFinished(e -> javafx.application.Platform.exit());
+            pause.play();
+        }
+
     }
 }

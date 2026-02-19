@@ -59,7 +59,9 @@ public class DialogBox extends HBox {
         db.flip();
 
         // Simple error detection (works for Jack-style errors)
-        boolean isError = text != null && (text.startsWith("☹") || text.toLowerCase().contains("oops"));
+        boolean isError = text != null
+                && (text.toLowerCase().contains("error")
+                || text.toLowerCase().contains("oops"));
 
         db.styleAsJack(isError);
         return db;
