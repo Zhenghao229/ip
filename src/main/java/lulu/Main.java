@@ -1,6 +1,6 @@
-package jack;
+package lulu;
 
-import jack.ui.MainWindow;
+import lulu.ui.MainWindow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -8,11 +8,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * A GUI for Jack using FXML.
+ * A GUI for Lulu using FXML.
  */
 public class Main extends Application {
 
-    private Jack jack = new Jack("data/jack.txt");
+    private Lulu lulu = new Lulu("data/lulu.txt");
 
     @Override
     public void start(Stage stage) {
@@ -24,7 +24,7 @@ public class Main extends Application {
             scene.getStylesheets().add(Main.class.getResource("/view/Style.css").toExternalForm());
 
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setJack(jack); // inject the Jack instance
+            fxmlLoader.<MainWindow>getController().setLulu(lulu); // inject the Lulu instance
 
             stage.show();
         } catch (Exception e) {

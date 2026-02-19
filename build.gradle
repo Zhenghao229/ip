@@ -44,15 +44,15 @@ test {
 }
 
 application {
-    mainClass.set("jack.Launcher")
+    mainClass.set("lulu.Launcher");
 }
 
 shadowJar {
-    archiveBaseName = "jack"
+    archiveBaseName = "lulu"
     archiveClassifier = null
 }
 
-run{
+run {
     standardInput = System.in
 }
 

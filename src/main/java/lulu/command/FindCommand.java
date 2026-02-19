@@ -1,9 +1,9 @@
-package jack.command;
+package lulu.command;
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Finds tasks whose descriptions contain a given keyword.
@@ -16,7 +16,7 @@ public class FindCommand extends Command {
     }
 
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) throws JackException {
+    public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         return tasks.findToDisplayString(keyword);
     }
 }

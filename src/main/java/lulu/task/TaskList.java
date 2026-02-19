@@ -1,9 +1,9 @@
-package jack.task;
+package lulu.task;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import jack.JackException;
+import lulu.LuluException;
 
 /**
  * Represents a list of tasks in the application.
@@ -84,7 +84,7 @@ public class TaskList {
      */
     public String toDisplayString() {
         if (size() == 0) {
-            return "Your jack.task list is empty.";
+            return "Your task list is empty.";
         }
         StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
         for (int i = 0; i < size(); i++) {
@@ -97,11 +97,11 @@ public class TaskList {
      * Checks whether the given index is within the valid range of the task list.
      *
      * @param idx Index to check (0-based).
-     * @throws JackException If the index is out of range.
+     * @throws LuluException If the index is out of range.
      */
-    public void checkIndex(int idx) throws JackException {
+    public void checkIndex(int idx) throws LuluException {
         if (idx < 0 || idx >= size()) {
-            throw new JackException("That jack.task number is out of range.");
+            throw new LuluException("That task number is out of range.");
         }
     }
 
@@ -136,10 +136,10 @@ public class TaskList {
      * @param newFrom new event start date/time (nullable)
      * @param newTo   new event end date/time (nullable)
      * @return updated task
-     * @throws JackException if invalid index or invalid update for task type
+     * @throws LuluException if invalid index or invalid update for task type
      */
     public Task updateTask(int index, String newDesc, LocalDateTime newBy,
-                           LocalDateTime newFrom, LocalDateTime newTo) throws JackException {
+                           LocalDateTime newFrom, LocalDateTime newTo) throws LuluException {
         checkIndex(index);
         Task t = get(index);
 
@@ -152,7 +152,7 @@ public class TaskList {
 
         if (newBy != null) {
             if (!(t instanceof Deadline)) {
-                throw new JackException("Only deadlines can be updated with /by.");
+                throw new LuluException("Only deadlines can be updated with /by.");
             }
 
             Deadline d = (Deadline) t;
@@ -163,7 +163,7 @@ public class TaskList {
 
         if (newFrom != null || newTo != null) {
             if (!(t instanceof Event)) {
-                throw new JackException("Only events can be updated with /from and /to.");
+                throw new LuluException("Only events can be updated with /from and /to.");
             }
             Event e = (Event) t;
             if (newFrom != null) {
@@ -176,12 +176,12 @@ public class TaskList {
             }
             // If both present (or after partial update), validate range.
             if (e.getTo().isBefore(e.getFrom())) {
-                throw new JackException("Event end time must not be before start time.");
+                throw new LuluException("Event end time must not be before start time.");
             }
         }
 
         if (!changed) {
-            throw new JackException("Nothing to update. Use /desc, /by, /from, /to.");
+            throw new LuluException("Nothing to update. Use /desc, /by, /from, /to.");
         }
 
         return t;

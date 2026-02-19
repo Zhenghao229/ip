@@ -1,9 +1,9 @@
-package jack.command;
+package lulu.command;
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Represents an executable command in the application.
@@ -18,9 +18,9 @@ public abstract class Command {
      * @param ui The user interface for displaying messages.
      * @param storage The storage handler for saving tasks.
      * @return A message to be shown to the user.
-     * @throws JackException If an error occurs during execution.
+     * @throws LuluException If an error occurs during execution.
      */
-    public abstract String execute(TaskList tasks, Ui ui, Storage storage) throws JackException;
+    public abstract String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException;
 
     /**
      * Indicates whether this command should terminate the application.

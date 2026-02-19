@@ -1,4 +1,4 @@
-package jack.storage;
+package lulu.storage;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,11 +11,11 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jack.JackException;
-import jack.task.Deadline;
-import jack.task.Event;
-import jack.task.Task;
-import jack.task.Todo;
+import lulu.LuluException;
+import lulu.task.Deadline;
+import lulu.task.Event;
+import lulu.task.Task;
+import lulu.task.Todo;
 
 /**
  * Handles loading tasks from disk and saving tasks to disk.
@@ -40,9 +40,9 @@ public class Storage {
      * If the file does not exist, returns an empty list.
      *
      * @return An {@link ArrayList} of tasks loaded from disk.
-     * @throws JackException If the file exists but cannot be read or contains invalid data.
+     * @throws LuluException If the file exists but cannot be read or contains invalid data.
      */
-    public ArrayList<Task> load() throws JackException {
+    public ArrayList<Task> load() throws LuluException {
         ArrayList<Task> tasks = new ArrayList<>();
 
         if (Files.notExists(filePath)) {
@@ -60,7 +60,7 @@ public class Storage {
             }
             return tasks;
         } catch (IOException e) {
-            throw new JackException("I couldn't read the save file: " + filePath);
+            throw new LuluException("I couldn't read the save file: " + filePath);
         }
     }
 
@@ -69,9 +69,9 @@ public class Storage {
      * Creates parent directories if necessary.
      *
      * @param tasks The task list to be saved.
-     * @throws JackException If the file cannot be written.
+     * @throws LuluException If the file cannot be written.
      */
-    public void save(ArrayList<Task> tasks) throws JackException {
+    public void save(ArrayList<Task> tasks) throws LuluException {
         try {
             Path parent = filePath.getParent();
             if (parent != null) {
@@ -84,15 +84,15 @@ public class Storage {
             }
             Files.write(filePath, lines);
         } catch (IOException e) {
-            throw new JackException("I couldn't save to file: " + filePath);
+            throw new LuluException("I couldn't save to file: " + filePath);
         }
     }
 
-    private Task parseLine(String line) throws JackException {
+    private Task parseLine(String line) throws LuluException {
         String[] parts = line.split("\\s*\\|\\s*");
 
         if (parts.length < 3) {
-            throw new JackException("Save file is corrupted: " + line);
+            throw new LuluException("Save file is corrupted: " + line);
         }
 
         String type = parts[0];
@@ -106,19 +106,19 @@ public class Storage {
 
         case "D":
             if (parts.length < 4) {
-                throw new JackException("Bad deadline line: " + line);
+                throw new LuluException("Bad deadline line: " + line);
             }
             try {
                 LocalDateTime by = parseDateTime(parts[3]);
                 task = new Deadline(parts[2], by);
             } catch (DateTimeParseException e) {
-                throw new JackException("Bad date in save file: " + parts[3]);
+                throw new LuluException("Bad date in save file: " + parts[3]);
             }
             break;
 
         case "E":
             if (parts.length < 5) {
-                throw new JackException("Bad event line: " + line);
+                throw new LuluException("Bad event line: " + line);
             }
             LocalDateTime from = parseDateTime(parts[3]);
             LocalDateTime to = parseDateTime(parts[4]);
@@ -127,7 +127,7 @@ public class Storage {
             break;
 
         default:
-            throw new JackException("Unknown jack.task type in file: " + type);
+            throw new LuluException("Unknown task type in file: " + type);
         }
 
         if (isDone) {
@@ -136,19 +136,19 @@ public class Storage {
         return task;
     }
 
-    private static LocalDateTime parseDateTime(String text) throws JackException {
+    private static LocalDateTime parseDateTime(String text) throws LuluException {
         try {
             return LocalDateTime.parse(text, DATE_TIME_FMT);
         } catch (DateTimeParseException e) {
             try {
                 return LocalDate.parse(text).atStartOfDay();
             } catch (DateTimeParseException e2) {
-                throw new JackException("Bad date/time in save file: " + text);
+                throw new LuluException("Bad date/time in save file: " + text);
             }
         }
     }
 
-    private String toLine(Task t) throws JackException {
+    private String toLine(Task t) throws LuluException {
         String done = t.isDone() ? "1" : "0";
 
         if (t instanceof Todo) {
@@ -162,7 +162,7 @@ public class Storage {
                     + " | " + e.getTo().format(DATE_TIME_FMT);
 
         } else {
-            throw new JackException("Unknown jack.task class: " + t.getClass());
+            throw new LuluException("Unknown task class: " + t.getClass());
         }
     }
 }

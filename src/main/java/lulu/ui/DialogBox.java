@@ -1,4 +1,4 @@
-package jack.ui;
+package lulu.ui;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -54,16 +54,16 @@ public class DialogBox extends HBox {
         return db;
     }
 
-    public static DialogBox getJackDialog(String text, Image img) {
+    public static DialogBox getLuluDialog(String text, Image img) {
         DialogBox db = new DialogBox(text, img);
         db.flip();
 
-        // Simple error detection (works for Jack-style errors)
+        // Simple error detection (works for Lulu-style errors)
         boolean isError = text != null
                 && (text.toLowerCase().contains("error")
                 || text.toLowerCase().contains("oops"));
 
-        db.styleAsJack(isError);
+        db.styleAsLulu(isError);
         return db;
     }
 
@@ -71,8 +71,8 @@ public class DialogBox extends HBox {
         dialog.getStyleClass().addAll("bubble", "user-bubble");
     }
 
-    private void styleAsJack(boolean isError) {
+    private void styleAsLulu(boolean isError) {
         dialog.getStyleClass().add("bubble");
-        dialog.getStyleClass().add(isError ? "error-bubble" : "jack-bubble");
+        dialog.getStyleClass().add(isError ? "error-bubble" : "lulu-bubble");
     }
 }

@@ -1,7 +1,7 @@
-package jack.task;
+package lulu.task;
 
 /**
- * Represents a generic task in Jack.
+ * Represents a generic task in Lulu.
  * Each task has a type, description, and completion status.
  */
 public class Task {
@@ -42,7 +42,7 @@ public class Task {
      * @return "X" if the task is done, otherwise a blank space.
      */
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); //mark done jack.task with X
+        return (isDone ? "X" : " "); //mark done task with X
     }
 
     /**

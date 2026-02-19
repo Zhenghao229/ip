@@ -1,8 +1,8 @@
-package jack.command;
+package lulu.command;
 
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Displays all tasks currently in the task list.

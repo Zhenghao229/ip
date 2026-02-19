@@ -1,9 +1,10 @@
 package jack.command;
 
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.task.Todo;
-import jack.ui.Ui;
+import lulu.command.MarkCommand;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.task.Todo;
+import lulu.ui.Ui;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

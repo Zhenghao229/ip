@@ -1,10 +1,10 @@
-package jack.command;
+package lulu.command;
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.Task;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.Task;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Deletes a task from the task list by index.
@@ -24,14 +24,14 @@ public class DeleteCommand extends Command {
     /**
      * Removes the specified task and saves the updated list.
      *
-     * @throws JackException If the index is invalid.
+     * @throws LuluException If the index is invalid.
      */
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) throws JackException {
+    public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         tasks.checkIndex(index);
         Task removed = tasks.remove(index);
         storage.save(tasks.getInternalList());
-        return "Noted. I've removed this jack.task:\n  " + removed
+        return "Alright~ I removed it. Your list feels lighter now \uD83C\uDF3F:\n  " + removed
                 + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 }

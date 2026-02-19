@@ -1,8 +1,8 @@
-package jack.command;
+package lulu.command;
 
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Terminates the application.
@@ -14,7 +14,7 @@ public class ExitCommand extends Command {
      */
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) {
-        return "Bye. Hope to see you again soon!";
+        return "Bye bye~ LULU is going to rest now \uD83D\uDE34";
     }
 
     /**

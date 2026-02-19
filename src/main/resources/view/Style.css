@@ -1,6 +1,6 @@
 /* ROOT WINDOW */
 .root {
-    -fx-font-family: "Segoe UI", "Inter", "Arial";
+    -fx-font-family: "Segoe UI", "Comic Sans MS", "Arial";
     -fx-font-size: 14px;
 
     -fx-background-image: url("/images/background.png");
@@ -12,7 +12,7 @@
 .label {
     -fx-text-fill: #111827;      /* darker */
     -fx-font-size: 15px;
-    -fx-font-weight: 600;        /* semi-bold */
+    -fx-font-weight: 900;
     -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.55), 3, 0.3, 0, 0);
 }
 
@@ -39,12 +39,16 @@
     -fx-max-width: 260px;
 }
 
+.bubble .label {
+    -fx-line-spacing: 2px;
+}
+
 .user-bubble {
     -fx-background-color: rgba(79, 172, 254, 0.75);  /* more solid */
 }
 
-.jack-bubble {
-    -fx-background-color: rgba(255, 255, 255, 0.90); /* more solid */
+.lulu-bubble {
+    -fx-background-color: #f0fdf4;   /* very soft green */
 }
 
 .error-bubble {

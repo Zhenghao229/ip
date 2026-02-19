@@ -1,6 +1,5 @@
-package jack.ui;
+package lulu.ui;
 
-import jack.Jack;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -8,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import lulu.Lulu;
 
 /**
  * Controller for the main GUI.
@@ -22,10 +22,10 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private Jack jack;
+    private Lulu lulu;
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/labi.png"));
-    private Image jackImage = new Image(this.getClass().getResourceAsStream("/images/jack.png"));
+    private Image luluImage = new Image(this.getClass().getResourceAsStream("/images/lulu.png"));
 
     /**
      * Initializes the main window. Runs automatically after FXML is loaded.
@@ -36,15 +36,15 @@ public class MainWindow extends AnchorPane {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
 
         dialogContainer.getChildren().add(
-                DialogBox.getJackDialog("Hello! I'm Jack. What can I do for you today?", jackImage)
+                DialogBox.getLuluDialog("Hi hi~ I'm LULU Capybara. What can I do for you today?", luluImage)
         );
     }
 
     /**
-     * Injects the Jack instance
+     * Injects the Lulu instance
      */
-    public void setJack(Jack j) {
-        jack = j;
+    public void setLulu(Lulu j) {
+        lulu = j;
     }
 
     /**
@@ -54,10 +54,10 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = jack.getResponse(input);
+        String response = lulu.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getJackDialog(response, jackImage)
+                DialogBox.getLuluDialog(response, luluImage)
         );
         userInput.clear();
 

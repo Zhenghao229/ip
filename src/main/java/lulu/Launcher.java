@@ -1,4 +1,4 @@
-package jack;
+package lulu;
 
 import javafx.application.Application;
 

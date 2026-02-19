@@ -1,4 +1,4 @@
-package jack.task;
+package lulu.task;
 
 /**
  * Represents the supported types of tasks in the application.

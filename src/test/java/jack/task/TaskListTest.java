@@ -1,6 +1,9 @@
 package jack.task;
 
-import jack.JackException;
+import lulu.LuluException;
+import lulu.task.TaskList;
+import lulu.task.Todo;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,8 +36,8 @@ public class TaskListTest {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
 
-        assertThrows(JackException.class, () -> tasks.checkIndex(-1));
-        assertThrows(JackException.class, () -> tasks.checkIndex(1)); // size=1, valid index only 0
+        assertThrows(LuluException.class, () -> tasks.checkIndex(-1));
+        assertThrows(LuluException.class, () -> tasks.checkIndex(1)); // size=1, valid index only 0
     }
 
     @Test

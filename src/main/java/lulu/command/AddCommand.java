@@ -1,11 +1,11 @@
-package jack.command;
+package lulu.command;
 
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.Task;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.Task;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Indicates whether this command should terminate the application.
@@ -27,10 +27,10 @@ public class AddCommand extends Command {
      * Adds the task to the list and saves the updated list.
      */
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) throws JackException {
+    public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         tasks.add(task);
         storage.save(tasks.getInternalList());
-        return "Got it. I've added this jack.task:\n  " + task
+        return "Ok ok~ I added it to your list:\n  " + task
                 + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 }

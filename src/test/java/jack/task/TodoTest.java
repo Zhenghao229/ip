@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import lulu.task.Todo;
+
 public class TodoTest {
 
     @Test

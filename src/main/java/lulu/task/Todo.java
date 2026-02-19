@@ -1,4 +1,4 @@
-package jack.task;
+package lulu.task;
 
 /**
  * Represents a to-do task that only has a description.

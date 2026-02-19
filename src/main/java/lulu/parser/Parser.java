@@ -1,23 +1,23 @@
-package jack.parser;
+package lulu.parser;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import jack.JackException;
-import jack.command.AddCommand;
-import jack.command.Command;
-import jack.command.DeleteCommand;
-import jack.command.ExitCommand;
-import jack.command.FindCommand;
-import jack.command.ListCommand;
-import jack.command.MarkCommand;
-import jack.command.UnmarkCommand;
-import jack.command.UpdateCommand;
-import jack.task.Deadline;
-import jack.task.Event;
-import jack.task.Task;
-import jack.task.Todo;
+import lulu.LuluException;
+import lulu.command.AddCommand;
+import lulu.command.Command;
+import lulu.command.DeleteCommand;
+import lulu.command.ExitCommand;
+import lulu.command.FindCommand;
+import lulu.command.ListCommand;
+import lulu.command.MarkCommand;
+import lulu.command.UnmarkCommand;
+import lulu.command.UpdateCommand;
+import lulu.task.Deadline;
+import lulu.task.Event;
+import lulu.task.Task;
+import lulu.task.Todo;
 
 /**
  * Parses raw user input into executable {@link Command} objects.
@@ -33,9 +33,9 @@ public class Parser {
      *
      * @param input Raw user input.
      * @return A {@link Command} representing the action requested by the user.
-     * @throws JackException If the input is invalid or does not match any supported command format.
+     * @throws LuluException If the input is invalid or does not match any supported command format.
      */
-    public static Command parse(String input) throws JackException {
+    public static Command parse(String input) throws LuluException {
         assert input != null : "User input should not be null";
         input = input.trim();
 
@@ -60,7 +60,7 @@ public class Parser {
         if (input.startsWith("find ")) {
             String keyword = input.substring(5).trim();
             if (keyword.isEmpty()) {
-                throw new JackException("Please provide a keyword to find.");
+                throw new LuluException("Please provide a keyword to find.");
             }
             return new FindCommand(keyword);
         }
@@ -70,42 +70,42 @@ public class Parser {
         }
 
         // add tasks
-        Task t = parseTask(input); // existing parseTask that returns Jack.Todo/Jack.Deadline/Jack.Event
+        Task t = parseTask(input); // existing parseTask that returns Lulu.Todo/Lulu.Deadline/Lulu.Event
         return new AddCommand(t);
     }
 
-    private static int parseTaskNumber(String input, String keyword) throws JackException {
+    private static int parseTaskNumber(String input, String keyword) throws LuluException {
         assert input != null && keyword != null : "Input and keyword must not be null";
         String numberPart = input.substring(keyword.length()).trim();
         if (numberPart.isEmpty()) {
-            throw new JackException("Please provide a jack.task number, e.g. " + keyword + " 2");
+            throw new LuluException("Please provide a lulu.task number, e.g. " + keyword + " 2");
         }
         try {
             return Integer.parseInt(numberPart);
         } catch (NumberFormatException e) {
-            throw new JackException("Jack.Task number must be a number, e.g. " + keyword + " 2");
+            throw new LuluException("Lulu.Task number must be a number, e.g. " + keyword + " 2");
         }
     }
 
-    private static Task parseTask(String input) throws JackException {
+    private static Task parseTask(String input) throws LuluException {
         if (input.equals("todo")) {
-            throw new JackException("The description of a todo cannot be empty.");
+            throw new LuluException("The description of a todo cannot be empty.");
         }
         if (input.startsWith("todo ")) {
             String desc = input.substring(5).trim();
             if (desc.isEmpty()) {
-                throw new JackException("The description of a todo cannot be empty.");
+                throw new LuluException("The description of a todo cannot be empty.");
             }
             return new Todo(desc);
         }
 
         if (input.equals("deadline")) {
-            throw new JackException("The description of a deadline cannot be empty.");
+            throw new LuluException("The description of a deadline cannot be empty.");
         }
         if (input.startsWith("deadline ")) {
             String rest = input.substring(9).trim();
             if (!rest.contains(" /by ")) {
-                throw new JackException(
+                throw new LuluException(
                         "Deadline format: deadline <description> /by <yyyy-MM-dd HH:mm>"
                 );
             }
@@ -114,7 +114,7 @@ public class Parser {
             String byStr = parts[1].trim();
 
             if (desc.isEmpty() || byStr.isEmpty()) {
-                throw new JackException(
+                throw new LuluException(
                         "Deadline format: deadline <description> /by <yyyy-MM-dd HH:mm>"
                 );
             }
@@ -124,12 +124,12 @@ public class Parser {
         }
 
         if (input.equals("event")) {
-            throw new JackException("The description of an event cannot be empty.");
+            throw new LuluException("The description of an event cannot be empty.");
         }
         if (input.startsWith("event ")) {
             String rest = input.substring(6).trim();
             if (!rest.contains(" /from ") || !rest.contains(" /to ")) {
-                throw new JackException(
+                throw new LuluException(
                         "Event format: event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>"
                 );
             }
@@ -141,7 +141,7 @@ public class Parser {
             String toStr = p2[1].trim();
 
             if (desc.isEmpty() || fromStr.isEmpty() || toStr.isEmpty()) {
-                throw new JackException(
+                throw new LuluException(
                         "Event format: event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>"
                 );
             }
@@ -150,21 +150,21 @@ public class Parser {
             LocalDateTime to = parseDateTime(toStr, "/to");
 
             if (to.isBefore(from)) {
-                throw new JackException("Event end time must not be before start time.");
+                throw new LuluException("Event end time must not be before start time.");
             }
 
             return new Event(desc, from, to);
         }
 
-        throw new JackException("I'm sorry, but I don't know what that means :-(");
+        throw new LuluException("I'm sorry, but I don't know what that means :-(");
     }
 
-    private static Command parseUpdate(String input) throws JackException {
+    private static Command parseUpdate(String input) throws LuluException {
         String rest = input.substring("update ".length()).trim();
         String[] parts = rest.split("\\s+", 2);
 
         if (parts.length < 2) {
-            throw new JackException(
+            throw new LuluException(
                     "Usage: update INDEX /desc TEXT "
                             + "[/by yyyy-MM-dd HH:mm] "
                             + "[/from yyyy-MM-dd HH:mm] "
@@ -185,22 +185,22 @@ public class Parser {
         LocalDateTime newTo = (toStr == null) ? null : parseDateTime(toStr, "/to");
 
         if (newDesc == null && newBy == null && newFrom == null && newTo == null) {
-            throw new JackException("Nothing to update. Use /desc, /by, /from, /to.");
+            throw new LuluException("Nothing to update. Use /desc, /by, /from, /to.");
         }
 
         return new UpdateCommand(idx, newDesc, newBy, newFrom, newTo);
     }
 
-    private static LocalDateTime parseDateTime(String text, String flag) throws JackException {
+    private static LocalDateTime parseDateTime(String text, String flag) throws LuluException {
         try {
             return LocalDateTime.parse(text, IN_FMT);
         } catch (DateTimeParseException e) {
-            throw new JackException("Invalid date/time after " + flag
+            throw new LuluException("Invalid date/time after " + flag
                     + ". Use yyyy-MM-dd HH:mm (e.g. 2026-02-10 17:00)");
         }
     }
 
-    private static String extractValue(String args, String flag) throws JackException {
+    private static String extractValue(String args, String flag) throws LuluException {
         int start = args.indexOf(flag);
         if (start == -1) {
             return null;
@@ -208,7 +208,7 @@ public class Parser {
 
         int valueStart = start + flag.length();
         if (valueStart >= args.length()) {
-            throw new JackException("Missing value after " + flag);
+            throw new LuluException("Missing value after " + flag);
         }
 
         int end = nextFlagPos(args, valueStart);
@@ -216,7 +216,7 @@ public class Parser {
         value = value.trim();
 
         if (value.isEmpty()) {
-            throw new JackException("Missing value after " + flag);
+            throw new LuluException("Missing value after " + flag);
         }
         return value;
     }

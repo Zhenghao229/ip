@@ -1,4 +1,4 @@
-package jack.ui;
+package lulu.ui;
 
 import java.util.Scanner;
 
@@ -14,7 +14,7 @@ public class Ui {
      * Displays the welcome message at application start.
      */
     public void showWelcome() {
-        System.out.println("Hello! I'm Jack.Jack.");
+        System.out.println("Hello! I'm Lulu.Lulu.");
         System.out.println("What can I do for you?");
     }
 
@@ -37,7 +37,7 @@ public class Ui {
      * @param msg The error message content.
      */
     public void showError(String msg) {
-        System.out.println("OOPS!!! " + msg);
+        System.out.println("OOPS " + msg);
     }
 
     /**

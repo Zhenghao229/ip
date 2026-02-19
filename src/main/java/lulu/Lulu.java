@@ -1,24 +1,24 @@
-package jack;
+package lulu;
 
-import jack.command.Command;
-import jack.parser.Parser;
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.command.Command;
+import lulu.parser.Parser;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
-public class Jack {
+public class Lulu {
     private final Ui ui;
     private final Storage storage;
     private final TaskList tasks;
 
-    public Jack(String filePath) {
+    public Lulu(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
 
         TaskList loadedTasks;
         try {
             loadedTasks = new TaskList(storage.load());
-        } catch (JackException e) {
+        } catch (LuluException e) {
             ui.showError(e.getMessage());
             loadedTasks = new TaskList();
         }
@@ -39,7 +39,7 @@ public class Jack {
                 ui.showMessage(result);
 
                 isExit = c.isExit();
-            } catch (JackException e) {
+            } catch (LuluException e) {
                 ui.showError(e.getMessage());
             } finally {
                 ui.showLine();
@@ -57,6 +57,6 @@ public class Jack {
     }
 
     public static void main(String[] args) {
-        new Jack("data/jack.txt").run();
+        new Lulu("data/lulu.txt").run();
     }
 }

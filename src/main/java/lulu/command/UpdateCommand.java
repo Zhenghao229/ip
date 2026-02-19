@@ -1,12 +1,12 @@
-package jack.command;
+package lulu.command;
 
 import java.time.LocalDateTime;
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.Task;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.Task;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Updates one or more fields of an existing task.
@@ -39,7 +39,7 @@ public class UpdateCommand extends Command {
     }
 
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) throws JackException {
+    public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         Task updated = tasks.updateTask(index, newDesc, newBy, newFrom, newTo);
         storage.save(tasks.getInternalList()); // must return ArrayList<Task>
         return "Updated: " + updated;

@@ -1,9 +1,9 @@
-package jack.command;
+package lulu.command;
 
-import jack.JackException;
-import jack.storage.Storage;
-import jack.task.TaskList;
-import jack.ui.Ui;
+import lulu.LuluException;
+import lulu.storage.Storage;
+import lulu.task.TaskList;
+import lulu.ui.Ui;
 
 /**
  * Marks a task in the task list as completed.
@@ -23,13 +23,13 @@ public class MarkCommand extends Command {
     /**
      * Marks the specified task as done and saves the updated list.
      *
-     * @throws JackException If the index is invalid.
+     * @throws LuluException If the index is invalid.
      */
     @Override
-    public String execute(TaskList tasks, Ui ui, Storage storage) throws JackException {
+    public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         tasks.checkIndex(index);
         tasks.get(index).markAsDone();
         storage.save(tasks.getInternalList());
-        return "Nice! I've marked this jack.task as done:\n  " + tasks.get(index);
+        return "Nice! I've marked this task as done:\n  " + tasks.get(index);
     }
 }
