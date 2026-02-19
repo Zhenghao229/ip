@@ -23,6 +23,7 @@ public class Main extends Application {
             Scene scene = new Scene(ap);
             scene.getStylesheets().add(Main.class.getResource("/view/Style.css").toExternalForm());
 
+            stage.setTitle("LULU Capybara - Cozy Task Manager");
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setLulu(lulu); // inject the Lulu instance
 
