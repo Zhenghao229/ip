@@ -28,6 +28,8 @@
                 prefWidth="76.0"
                 text="Send" />
         <ScrollPane fx:id="scrollPane"
+                    fitToWidth="true"
+                    VBox.vgrow="ALWAYS"
                     AnchorPane.topAnchor="0.0"
                     AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0"
@@ -36,9 +38,7 @@
                     hvalue="1.0"
                     vvalue="1.0">
         <content>
-                <VBox fx:id="dialogContainer"
-                      prefHeight="552.0"
-                      prefWidth="388.0" />
+                <VBox fx:id="dialogContainer"/>
             </content>
         </ScrollPane>
     </children>

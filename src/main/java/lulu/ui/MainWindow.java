@@ -35,6 +35,8 @@ public class MainWindow extends AnchorPane {
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
 
+        dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(20));
+
         dialogContainer.getChildren().add(
                 DialogBox.getLuluDialog("Hi hi~ I'm LULU Capybara. What can I do for you today?", luluImage)
         );
