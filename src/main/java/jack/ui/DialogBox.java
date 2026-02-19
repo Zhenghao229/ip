@@ -49,12 +49,28 @@ public class DialogBox extends HBox {
     }
 
     public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
+        db.styleAsUser();
+        return db;
     }
 
-    public static DialogBox getDukeDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
+    public static DialogBox getJackDialog(String text, Image img) {
+        DialogBox db = new DialogBox(text, img);
         db.flip();
+
+        // Simple error detection (works for Jack-style errors)
+        boolean isError = text != null && (text.startsWith("☹") || text.toLowerCase().contains("oops"));
+
+        db.styleAsJack(isError);
         return db;
+    }
+
+    private void styleAsUser() {
+        dialog.getStyleClass().addAll("bubble", "user-bubble");
+    }
+
+    private void styleAsJack(boolean isError) {
+        dialog.getStyleClass().add("bubble");
+        dialog.getStyleClass().add(isError ? "error-bubble" : "jack-bubble");
     }
 }

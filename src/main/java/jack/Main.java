@@ -21,7 +21,7 @@ public class Main extends Application {
             AnchorPane ap = fxmlLoader.load();
 
             Scene scene = new Scene(ap);
-            stage.setScene(scene);
+            scene.getStylesheets().add(Main.class.getResource("/view/Style.css").toExternalForm());
 
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setJack(jack); // inject the Jack instance

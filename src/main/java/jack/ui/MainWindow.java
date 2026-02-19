@@ -49,7 +49,7 @@ public class MainWindow extends AnchorPane {
         String response = jack.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, jackImage)
+                DialogBox.getJackDialog(response, jackImage)
         );
         userInput.clear();
     }

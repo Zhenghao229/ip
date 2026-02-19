@@ -1,0 +1,83 @@
+/* ROOT WINDOW */
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Arial";
+    -fx-font-size: 14px;
+
+    -fx-background-image: url("/images/background.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+}
+
+.label {
+    -fx-text-fill: #111827;      /* darker */
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;        /* semi-bold */
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.55), 3, 0.3, 0, 0);
+}
+
+/* SCROLL PANE (CHAT AREA) */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: rgba(255, 255, 255, 0.30);
+}
+
+/* prevent inner content from painting a solid block */
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* CHAT BUBBLES */
+.bubble {
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.2, 0, 2);
+    -fx-max-width: 260px;
+}
+
+.user-bubble {
+    -fx-background-color: rgba(79, 172, 254, 0.75);  /* more solid */
+}
+
+.jack-bubble {
+    -fx-background-color: rgba(255, 255, 255, 0.90); /* more solid */
+}
+
+.error-bubble {
+    -fx-background-color: rgba(255, 90, 90, 0.55);   /* more solid */
+    -fx-border-color: rgba(255, 90, 90, 0.90);
+    -fx-border-width: 1;
+}
+
+.error-bubble .label {
+    -fx-text-fill: #7f1d1d;
+}
+
+/* INPUT AREA */
+.text-field {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(0,0,0,0.15);
+    -fx-padding: 10 12 10 12;
+    -fx-background-color: rgba(255,255,255,0.85);
+}
+
+.button {
+    -fx-background-radius: 14;
+    -fx-font-weight: 700;
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #2563eb;
+}
+
+.button:pressed {
+    -fx-background-color: #1d4ed8;
+}

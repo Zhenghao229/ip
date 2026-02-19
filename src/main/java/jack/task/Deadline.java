@@ -2,13 +2,14 @@ package jack.task;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Represents a deadline task with a due date.
  */
 public class Deadline extends Task {
     private static final DateTimeFormatter OUT_FMT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
+            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm", Locale.ENGLISH);
 
     private LocalDateTime by;
 
