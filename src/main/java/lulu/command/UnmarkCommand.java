@@ -17,6 +17,7 @@ public class UnmarkCommand extends Command {
      * @param index Index of the task to unmark (0-based).
      */
     public UnmarkCommand(int index) {
+        assert index >= 0 : "Index should already be converted to 0-based and non-negative";
         this.index = index;
     }
 
@@ -27,6 +28,7 @@ public class UnmarkCommand extends Command {
      */
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
+        assert tasks != null && ui != null && storage != null : "Dependencies must not be null";
         tasks.checkIndex(index);
         tasks.get(index).markAsNotDone();
         storage.save(tasks.getInternalList());

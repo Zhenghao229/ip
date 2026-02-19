@@ -32,6 +32,8 @@ public class Storage {
      * Tasks are stored as lines of text in a simple pipe-delimited format.
      */
     public Storage(String relativePath) {
+        assert relativePath != null : "Storage path must not be null";
+        assert !relativePath.trim().isEmpty() : "Storage path must not be blank";
         this.filePath = Paths.get(relativePath);
     }
 
@@ -72,6 +74,10 @@ public class Storage {
      * @throws LuluException If the file cannot be written.
      */
     public void save(ArrayList<Task> tasks) throws LuluException {
+        assert tasks != null : "Tasks list to save must not be null";
+        for (Task t : tasks) {
+            assert t != null : "Task list must not contain null tasks";
+        }
         try {
             Path parent = filePath.getParent();
             if (parent != null) {
@@ -89,6 +95,7 @@ public class Storage {
     }
 
     private Task parseLine(String line) throws LuluException {
+        assert line != null : "Line should not be null";
         String[] parts = line.split("\\s*\\|\\s*");
 
         if (parts.length < 3) {
@@ -149,6 +156,9 @@ public class Storage {
     }
 
     private String toLine(Task t) throws LuluException {
+        assert t != null : "Task to serialize must not be null";
+        assert t.getDescription() != null : "Task description must not be null when saving";
+
         String done = t.isDone() ? "1" : "0";
 
         if (t instanceof Todo) {

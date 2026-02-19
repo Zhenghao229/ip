@@ -160,6 +160,8 @@ public class Parser {
     }
 
     private static Command parseUpdate(String input) throws LuluException {
+        assert input != null : "Update input must not be null";
+
         String rest = input.substring("update ".length()).trim();
         String[] parts = rest.split("\\s+", 2);
 

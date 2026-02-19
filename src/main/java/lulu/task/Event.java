@@ -24,6 +24,9 @@ public class Event extends Task {
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(TaskType.EVENT, description);
+        assert from != null : "Event 'from' must not be null";
+        assert to != null : "Event 'to' must not be null";
+        assert !to.isBefore(from) : "Event end must not be before start";
         this.from = from;
         this.to = to;
     }
@@ -47,11 +50,17 @@ public class Event extends Task {
     }
 
     public void setFrom(LocalDateTime from) {
+        assert from != null : "Event 'from' must not be set to null";
         this.from = from;
+        assert to != null : "Event 'to' should not be null here";
+        assert !to.isBefore(this.from) : "Event end must not be before start";
     }
 
     public void setTo(LocalDateTime to) {
+        assert to != null : "Event 'to' must not be set to null";
         this.to = to;
+        assert from != null : "Event 'from' should not be null here";
+        assert !this.to.isBefore(from) : "Event end must not be before start";
     }
 
     /**
@@ -61,6 +70,7 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
+        assert from != null && to != null : "Event times should never be null when displaying";
         return super.toString()
                 + " (from: " + from.format(OUT_FMT)
                 + " to: " + to.format(OUT_FMT) + ")";

@@ -21,6 +21,7 @@ public class Deadline extends Task {
      */
     public Deadline(String description, LocalDateTime by) {
         super(TaskType.DEADLINE, description);
+        assert by != null : "Deadline 'by' must not be null";
         this.by = by;
     }
 
@@ -34,6 +35,7 @@ public class Deadline extends Task {
     }
 
     public void setBy(LocalDateTime by) {
+        assert by != null : "Deadline 'by' must not be set to null";
         this.by = by;
     }
 
@@ -44,6 +46,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
+        assert by != null : "Deadline 'by' should never be null when displaying";
         return super.toString() + " (by: " + by.format(OUT_FMT) + ")";
     }
 }

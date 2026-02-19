@@ -16,6 +16,8 @@ public class Task {
      * @param description The description of the task.
      */
     public Task(TaskType type, String description) {
+        assert type != null : "Task type must not be null";
+        assert description != null : "Task description must not be null";
         this.type = type;
         this.description = description;
         this.isDone = false;
@@ -64,6 +66,7 @@ public class Task {
     }
 
     public void setDescription(String description) {
+        assert description != null : "New description must not be null";
         this.description = description;
     }
 
@@ -71,6 +74,8 @@ public class Task {
      * Returns true if the task description contains the given keyword (case-insensitive).
      */
     public boolean containsKeyword(String keyword) {
+        assert keyword != null : "Keyword must not be null";
+        assert description != null : "Description should not be null here";
         return description.toLowerCase().contains(keyword.toLowerCase());
     }
 

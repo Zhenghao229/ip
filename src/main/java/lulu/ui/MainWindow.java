@@ -33,6 +33,11 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     public void initialize() {
+        assert scrollPane != null : "scrollPane not injected: check fx:id in FXML";
+        assert dialogContainer != null : "dialogContainer not injected: check fx:id in FXML";
+        assert userInput != null : "userInput not injected: check fx:id in FXML";
+        assert sendButton != null : "sendButton not injected: check fx:id in FXML";
+
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
 
         dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(20));
@@ -45,8 +50,9 @@ public class MainWindow extends AnchorPane {
     /**
      * Injects the Lulu instance
      */
-    public void setLulu(Lulu j) {
-        lulu = j;
+    public void setLulu(Lulu l) {
+        assert l != null : "Lulu instance must not be null";
+        lulu = l;
     }
 
     /**
@@ -55,6 +61,7 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     private void handleUserInput() {
+        assert lulu != null : "Lulu must be set before user interaction";
         String input = userInput.getText();
         String response = lulu.getResponse(input);
         dialogContainer.getChildren().addAll(

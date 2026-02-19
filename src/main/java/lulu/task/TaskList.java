@@ -26,6 +26,7 @@ public class TaskList {
      * @param tasks The list of tasks to use internally.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "Backing task list must not be null";
         this.tasks = tasks;
     }
 
@@ -45,6 +46,7 @@ public class TaskList {
      * @return The task at the given index.
      */
     public Task get(int index) {
+        assert index >= 0 && index < size() : "Caller should pass a valid index";
         return tasks.get(index);
     }
 
@@ -54,6 +56,7 @@ public class TaskList {
      * @param task The task to be added.
      */
     public void add(Task task) {
+        assert task != null : "Task to add must not be null";
         tasks.add(task);
     }
 
@@ -64,6 +67,7 @@ public class TaskList {
      * @return The removed task.
      */
     public Task remove(int index) {
+        assert index >= 0 && index < size() : "Caller should pass a valid index";
         return tasks.remove(index);
     }
 
@@ -109,6 +113,7 @@ public class TaskList {
      * Returns a formatted string of tasks whose descriptions contain the keyword.
      */
     public String findToDisplayString(String keyword) {
+        assert keyword != null : "Keyword must not be null";
         StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
         int count = 0;
 

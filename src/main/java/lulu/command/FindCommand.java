@@ -11,7 +11,14 @@ import lulu.ui.Ui;
 public class FindCommand extends Command {
     private final String keyword;
 
+    /**
+     * Creates a FindCommand that searches for tasks containing the given keyword.
+     *
+     * @param keyword The keyword to search for.
+     */
     public FindCommand(String keyword) {
+        assert keyword != null : "Keyword must not be null";
+        assert !keyword.trim().isEmpty() : "Keyword should not be blank";
         this.keyword = keyword;
     }
 
