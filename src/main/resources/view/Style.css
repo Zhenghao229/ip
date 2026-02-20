@@ -36,7 +36,7 @@
     -fx-background-radius: 16;
     -fx-border-radius: 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.2, 0, 2);
-    -fx-max-width: 260px;
+    -fx-max-width: 600px;
 }
 
 .bubble .label {

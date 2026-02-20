@@ -21,12 +21,24 @@ import lulu.task.Todo;
 
 /**
  * Parses raw user input into executable {@link Command} objects.
- * Supported commands include listing tasks, marking/unmarking, deleting, and adding tasks.
+ * Supported commands include listing tasks, marking/unmarking, deleting, finding and adding tasks.
  */
 public class Parser {
 
     private static final DateTimeFormatter IN_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    private static final String UPDATE_HELP =
+            "How to use update:\n"
+                    + "update INDEX FIELD\n\n"
+                    + "Fields:\n"
+                    + "  /desc TEXT\n"
+                    + "  /by yyyy-MM-dd HH:mm\n"
+                    + "  /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm\n\n"
+                    + "Example:\n"
+                    + "  update 2 /desc read book\n"
+                    + "  update 3 /by 2026-02-25 20:00\n"
+                    + "  update 4 /from 2026-02-20 14:00 /to 2026-02-20 16:00";
 
     /**
      * Converts a user input string into the corresponding {@link Command}.
@@ -45,45 +57,75 @@ public class Parser {
         if (input.equals("list")) {
             return new ListCommand();
         }
+
+        // mark
+        if (input.equals("mark")) {
+            throw new LuluException("Usage: mark INDEX\nExample: mark 2");
+        }
         if (input.startsWith("mark ")) {
-            int idx = parseTaskNumber(input, "mark") - 1;
+            int idx = parsePositiveTaskNumber(input, "mark") - 1;
             return new MarkCommand(idx);
         }
+
+        // unmark
+        if (input.equals("unmark")) {
+            throw new LuluException("Usage: unmark INDEX\nExample: unmark 2");
+        }
         if (input.startsWith("unmark ")) {
-            int idx = parseTaskNumber(input, "unmark") - 1;
+            int idx = parsePositiveTaskNumber(input, "unmark") - 1;
             return new UnmarkCommand(idx);
         }
+
+        // delete
+        if (input.equals("delete")) {
+            throw new LuluException("Usage: delete INDEX\nExample: delete 2");
+        }
         if (input.startsWith("delete ")) {
-            int idx = parseTaskNumber(input, "delete") - 1;
+            int idx = parsePositiveTaskNumber(input, "delete") - 1;
             return new DeleteCommand(idx);
+        }
+
+        // find
+        if (input.equals("find")) {
+            throw new LuluException("Usage: find KEYWORD\nExample: find book");
         }
         if (input.startsWith("find ")) {
             String keyword = input.substring(5).trim();
             if (keyword.isEmpty()) {
-                throw new LuluException("Please provide a keyword to find.");
+                throw new LuluException("Usage: find KEYWORD\nExample: find book");
             }
             return new FindCommand(keyword);
         }
 
+        // update
+        if (input.equals("update")) {
+            throw new LuluException(UPDATE_HELP);
+        }
         if (input.startsWith("update ")) {
             return parseUpdate(input);
         }
 
         // add tasks
-        Task t = parseTask(input); // existing parseTask that returns Lulu.Todo/Lulu.Deadline/Lulu.Event
+        Task t = parseTask(input);
         return new AddCommand(t);
     }
 
-    private static int parseTaskNumber(String input, String keyword) throws LuluException {
+    private static int parsePositiveTaskNumber(String input, String keyword) throws LuluException {
         assert input != null && keyword != null : "Input and keyword must not be null";
+
         String numberPart = input.substring(keyword.length()).trim();
         if (numberPart.isEmpty()) {
-            throw new LuluException("Please provide a lulu.task number, e.g. " + keyword + " 2");
+            throw new LuluException("Usage: " + keyword + " INDEX\nExample: " + keyword + " 2");
         }
+
         try {
-            return Integer.parseInt(numberPart);
+            int num = Integer.parseInt(numberPart);
+            if (num <= 0) {
+                throw new LuluException("Task number must be a positive integer.");
+            }
+            return num;
         } catch (NumberFormatException e) {
-            throw new LuluException("Lulu.Task number must be a number, e.g. " + keyword + " 2");
+            throw new LuluException("Task number must be a valid integer, e.g. " + keyword + " 2");
         }
     }
 
@@ -100,7 +142,8 @@ public class Parser {
         }
 
         if (input.equals("deadline")) {
-            throw new LuluException("The description of a deadline cannot be empty.");
+            throw new LuluException("The description of a deadline cannot be empty.\n"
+                                        + "Deadline format: deadline <description> /by <yyyy-MM-dd HH:mm>");
         }
         if (input.startsWith("deadline ")) {
             String rest = input.substring(9).trim();
@@ -124,7 +167,8 @@ public class Parser {
         }
 
         if (input.equals("event")) {
-            throw new LuluException("The description of an event cannot be empty.");
+            throw new LuluException("The description of an event cannot be empty.\n"
+                    + "Event format: event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>");
         }
         if (input.startsWith("event ")) {
             String rest = input.substring(6).trim();
@@ -166,15 +210,20 @@ public class Parser {
         String[] parts = rest.split("\\s+", 2);
 
         if (parts.length < 2) {
-            throw new LuluException(
-                    "Usage: update INDEX /desc TEXT "
-                            + "[/by yyyy-MM-dd HH:mm] "
-                            + "[/from yyyy-MM-dd HH:mm] "
-                            + "[/to yyyy-MM-dd HH:mm]"
-            );
+            throw new LuluException(UPDATE_HELP);
         }
 
-        int idx = Integer.parseInt(parts[0]) - 1;
+        int idx;
+        try {
+            int userIndex = Integer.parseInt(parts[0]);
+            if (userIndex <= 0) {
+                throw new LuluException("Task number must be a positive integer.");
+            }
+            idx = userIndex - 1;
+        } catch (NumberFormatException e) {
+            throw new LuluException("Task number must be a valid integer, e.g. update 2 /desc ...");
+        }
+
         String args = parts[1].trim();
 
         String newDesc = extractValue(args, "/desc");
@@ -187,7 +236,11 @@ public class Parser {
         LocalDateTime newTo = (toStr == null) ? null : parseDateTime(toStr, "/to");
 
         if (newDesc == null && newBy == null && newFrom == null && newTo == null) {
-            throw new LuluException("Nothing to update. Use /desc, /by, /from, /to.");
+            throw new LuluException(UPDATE_HELP);
+        }
+
+        if (newFrom != null && newTo != null && newTo.isBefore(newFrom)) {
+            throw new LuluException("Event end time must not be before start time.");
         }
 
         return new UpdateCommand(idx, newDesc, newBy, newFrom, newTo);
