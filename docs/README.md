@@ -1,4 +1,5 @@
-# 🧡 LULU Capybara – Cozy Task Manager 🌿
+# 🧡 LULU Capybara – Cozy Task Manager  User Guide
+![Ui.png](Ui.png)
 
 LULU Capybara is a calm and friendly task manager designed to help you stay organised — slowly, steadily, and stress-free.
 
