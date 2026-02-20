@@ -45,8 +45,10 @@ public class TaskList {
      * @param index Index of the task to retrieve (0-based).
      * @return The task at the given index.
      */
-    public Task get(int index) {
-        assert index >= 0 && index < size() : "Caller should pass a valid index";
+    public Task get(int index) throws LuluException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new LuluException("Task number is out of range.");
+        }
         return tasks.get(index);
     }
 
@@ -66,8 +68,10 @@ public class TaskList {
      * @param index Index of the task to remove (0-based).
      * @return The removed task.
      */
-    public Task remove(int index) {
-        assert index >= 0 && index < size() : "Caller should pass a valid index";
+    public Task remove(int index) throws LuluException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new LuluException("Task number is out of range.");
+        }
         return tasks.remove(index);
     }
 
@@ -92,7 +96,7 @@ public class TaskList {
         }
         StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
         for (int i = 0; i < size(); i++) {
-            sb.append(i + 1).append(". ").append(get(i)).append("\n");
+            sb.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
         return sb.toString().trim();
     }
@@ -118,7 +122,7 @@ public class TaskList {
         int count = 0;
 
         for (int i = 0; i < size(); i++) {
-            Task t = get(i);
+            Task t = tasks.get(i);
             if (t.containsKeyword(keyword)) {
                 count++;
                 sb.append(count).append(". ").append(t).append("\n");
@@ -170,18 +174,29 @@ public class TaskList {
             if (!(t instanceof Event)) {
                 throw new LuluException("Only events can be updated with /from and /to.");
             }
+
             Event e = (Event) t;
-            if (newFrom != null) {
-                e.setFrom(newFrom);
-                changed = true;
+
+            LocalDateTime oldFrom = e.getFrom();
+            LocalDateTime oldTo = e.getTo();
+
+            LocalDateTime finalFrom = (newFrom != null) ? newFrom : oldFrom;
+            LocalDateTime finalTo = (newTo != null) ? newTo : oldTo;
+
+            // Validate before mutating anything (prevents AssertionError)
+            if (finalTo.isBefore(finalFrom)) {
+                throw new LuluException("Event end time must not be before start time.");
             }
+
+            // Apply updates in a safe order to maintain invariant at every step.
+            // If both changed, set 'to' first then 'from' (prevents temporary invalid state).
             if (newTo != null) {
                 e.setTo(newTo);
                 changed = true;
             }
-            // If both present (or after partial update), validate range.
-            if (e.getTo().isBefore(e.getFrom())) {
-                throw new LuluException("Event end time must not be before start time.");
+            if (newFrom != null) {
+                e.setFrom(newFrom);
+                changed = true;
             }
         }
 

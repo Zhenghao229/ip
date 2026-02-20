@@ -1,11 +1,11 @@
 package lulu;
 
-import lulu.ui.MainWindow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lulu.ui.MainWindow;
 
 /**
  * A GUI for Lulu using FXML.

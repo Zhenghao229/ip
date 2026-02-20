@@ -1,16 +1,16 @@
-package jack.command;
+package lulu.command;
 
-import lulu.command.MarkCommand;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import lulu.storage.Storage;
 import lulu.task.TaskList;
 import lulu.task.Todo;
 import lulu.ui.Ui;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MarkCommandTest {
 
