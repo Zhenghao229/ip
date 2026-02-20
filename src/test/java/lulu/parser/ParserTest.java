@@ -124,7 +124,7 @@ public class ParserTest {
 
     // -------------------------
     // Find
-    // -------------------------
+    // ------------------------
 
     @Test
     public void parse_findWithKeyword_returnsFindCommand() throws Exception {
