@@ -36,19 +36,19 @@ todo read Java book
 Add a task that must be completed before a specific date and time.
 
 ```
-deadline submit report /by 25 Feb 2026 20:00
+deadline submit report /by 2026-02-26 21:00
 ```
 
 📌 Format for date/time:
 
 ```
-dd MMM yyyy HH:mm
+yyyy-MM-dd HH:mm
 ```
 
 Example:
 
 ```
-26 Feb 2026 21:00
+2026-02-26 21:00
 ```
 
 ---
@@ -58,7 +58,7 @@ Example:
 Add a task with a start and end time.
 
 ```
-event CS2103 lecture /from 20 Feb 2026 14:00 /to 20 Feb 2026 16:00
+event CS2103 lecture /from 2026-02-26 14:00 /to 2026-02-26 16:00
 ```
 
 ---
