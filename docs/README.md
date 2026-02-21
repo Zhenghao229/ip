@@ -128,7 +128,7 @@ update 2 /desc submit final report
 ### 🔹 Update a Deadline time
 
 ```
-update 2 /by 26 Feb 2026 21:00
+update 2 /by 2026-02-26 21:00
 ```
 
 ---
@@ -136,7 +136,7 @@ update 2 /by 26 Feb 2026 21:00
 ### 🔹 Update an Event time range
 
 ```
-update 3 /from 20 Feb 2026 15:00 /to 20 Feb 2026 17:00
+update 3 /from 2026-02-20 15:00 /to 2026-02-20 17:00
 ```
 
 ---
@@ -144,7 +144,7 @@ update 3 /from 20 Feb 2026 15:00 /to 20 Feb 2026 17:00
 ### 🔹 Update both description and time
 
 ```
-update 3 /desc CS2103 tutorial /from 20 Feb 2026 14:00 /to 20 Feb 2026 16:00
+update 3 /desc CS2103 tutorial /from 2026-02-20 14:00 /to 2026-02-20 16:00
 ```
 
 ---
@@ -160,7 +160,7 @@ update 3 /desc CS2103 tutorial /from 20 Feb 2026 14:00 /to 20 Feb 2026 16:00
 * Date/time format must follow:
 
 ```
-dd MMM yyyy HH:mm
+yyyy-MM-dd HH:mm
 ```
 
 ---
