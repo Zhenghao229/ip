@@ -137,6 +137,34 @@ public class TaskList {
     }
 
     /**
+     * Returns true if the given task already exists in the task list.
+     * <p>
+     * Equality is determined using {@link Task#equals(Object)}.
+     *
+     * @param task The task to check.
+     * @return true if a duplicate task exists.
+     */
+    public boolean contains(Task task) {
+        assert task != null : "Task must not be null";
+        return tasks.contains(task); // uses equals() now
+    }
+
+    /**
+     * Adds a task to the list only if it does not already exist.
+     *
+     * @param task The task to add.
+     * @throws LuluException If the task already exists in the list.
+     */
+    public void addUnique(Task task) throws LuluException {
+        assert task != null : "Task to add must not be null";
+
+        if (contains(task)) {
+            throw new LuluException("OOPS!!! That task already exists in your list:\n  " + task);
+        }
+        tasks.add(task);
+    }
+
+    /**
      * Updates selected fields of an existing task (null fields are ignored).
      *
      * @param index   0-based task index
@@ -152,11 +180,31 @@ public class TaskList {
         checkIndex(index);
         Task t = get(index);
 
+        String oldDesc = t.getDescription();
+
+        LocalDateTime oldBy = null;
+        if (t instanceof Deadline) {
+            oldBy = ((Deadline) t).getBy();
+        }
+
+        LocalDateTime oldFrom = null;
+        LocalDateTime oldTo = null;
+        if (t instanceof Event) {
+            oldFrom = ((Event) t).getFrom();
+            oldTo = ((Event) t).getTo();
+        }
+
         boolean changed = false;
 
         if (newDesc != null) {
-            t.setDescription(newDesc);
-            changed = true;
+            String current = t.getDescription();
+            String curNorm = current == null ? "" : current.trim().replaceAll("\\s+", " ").toLowerCase();
+            String newNorm = newDesc.trim().replaceAll("\\s+", " ").toLowerCase();
+
+            if (!newNorm.equals(curNorm)) {
+                t.setDescription(newDesc);
+                changed = true;
+            }
         }
 
         if (newBy != null) {
@@ -165,9 +213,11 @@ public class TaskList {
             }
 
             Deadline d = (Deadline) t;
-            d.setBy(newBy);
 
-            changed = true;
+            if (!newBy.equals(d.getBy())) {
+                d.setBy(newBy);
+                changed = true;
+            }
         }
 
         if (newFrom != null || newTo != null) {
@@ -177,33 +227,71 @@ public class TaskList {
 
             Event e = (Event) t;
 
-            LocalDateTime oldFrom = e.getFrom();
-            LocalDateTime oldTo = e.getTo();
+            oldFrom = e.getFrom();
+            oldTo = e.getTo();
 
             LocalDateTime finalFrom = (newFrom != null) ? newFrom : oldFrom;
             LocalDateTime finalTo = (newTo != null) ? newTo : oldTo;
 
-            // Validate before mutating anything (prevents AssertionError)
+
             if (finalTo.isBefore(finalFrom)) {
                 throw new LuluException("Event end time must not be before start time.");
             }
 
             // Apply updates in a safe order to maintain invariant at every step.
             // If both changed, set 'to' first then 'from' (prevents temporary invalid state).
-            if (newTo != null) {
+            if (newTo != null && !newTo.equals(oldTo)) {
                 e.setTo(newTo);
                 changed = true;
             }
-            if (newFrom != null) {
+            if (newFrom != null && !newFrom.equals(oldFrom)) {
                 e.setFrom(newFrom);
                 changed = true;
             }
         }
 
         if (!changed) {
-            throw new LuluException("Nothing to update. Use /desc, /by, /from, /to.");
+            throw new LuluException("Nothing changed - the task already has that value.");
+        }
+
+        if (hasDuplicateExceptIndex(index)) {
+            t.setDescription(oldDesc);
+
+            if (t instanceof Deadline) {
+                Deadline d = (Deadline) t;
+                d.setBy(oldBy);
+            }
+
+            if (t instanceof Event) {
+                Event e = (Event) t;
+
+                e.setTo(oldTo);
+                e.setFrom(oldFrom);
+            }
+
+            throw new LuluException("Hmm~ This update would create a duplicated task:\n  " + t);
         }
 
         return t;
+    }
+
+    /**
+     * Checks whether the task at the given index duplicates
+     * another task in the list.
+     *
+     * @param idx The index of the task to check.
+     * @return true if another identical task exists.
+     */
+    private boolean hasDuplicateExceptIndex(int idx) {
+        Task target = tasks.get(idx);
+        for (int i = 0; i < tasks.size(); i++) {
+            if (i == idx) {
+                continue;
+            }
+            if (target.equals(tasks.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

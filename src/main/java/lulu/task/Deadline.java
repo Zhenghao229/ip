@@ -3,6 +3,7 @@ package lulu.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents a deadline task with a due date.
@@ -37,6 +38,34 @@ public class Deadline extends Task {
     public void setBy(LocalDateTime by) {
         assert by != null : "Deadline 'by' must not be set to null";
         this.by = by;
+    }
+
+    /**
+     * Returns true if this deadline is equal to another deadline.
+     * <p>
+     * Two deadlines are equal if they have the same description
+     * (after normalisation) and the same due date.
+     *
+     * @param other The object to compare against.
+     * @return true if both deadlines are logically identical.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (!super.equals(other)) {
+            return false;
+        }
+        Deadline that = (Deadline) other;
+        return Objects.equals(this.by, that.by);
+    }
+
+    /**
+     * Returns a hash code consistent with {@link #equals(Object)}.
+     *
+     * @return hash code representing this deadline.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), by);
     }
 
     /**

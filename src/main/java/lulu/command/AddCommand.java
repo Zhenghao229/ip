@@ -30,7 +30,7 @@ public class AddCommand extends Command {
     @Override
     public String execute(TaskList tasks, Ui ui, Storage storage) throws LuluException {
         assert tasks != null && ui != null && storage != null : "Dependencies must not be null";
-        tasks.add(task);
+        tasks.addUnique(task);
         storage.save(tasks.getInternalList());
         return "Ok ok~ I added it to your list:\n  " + task
                 + "\nNow you have " + tasks.size() + " tasks in the list.";

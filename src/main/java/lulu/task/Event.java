@@ -3,6 +3,7 @@ package lulu.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents an event task with a start and end date/time.
@@ -61,6 +62,35 @@ public class Event extends Task {
         this.to = to;
         assert from != null : "Event 'from' should not be null here";
         assert !this.to.isBefore(from) : "Event end must not be before start";
+    }
+
+    /**
+     * Returns true if this event is equal to another event.
+     * <p>
+     * Two events are equal if they have the same description
+     * (after normalisation), and the same start and end times.
+     *
+     * @param other The object to compare against.
+     * @return true if both events are logically identical.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (!super.equals(other)) {
+            return false;
+        }
+        Event that = (Event) other;
+        return Objects.equals(this.from, that.from)
+                && Objects.equals(this.to, that.to);
+    }
+
+    /**
+     * Returns a hash code consistent with {@link #equals(Object)}.
+     *
+     * @return hash code representing this event.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), from, to);
     }
 
     /**

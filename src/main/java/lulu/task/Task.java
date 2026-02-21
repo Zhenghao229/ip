@@ -1,5 +1,7 @@
 package lulu.task;
 
+import java.util.Objects;
+
 /**
  * Represents a generic task in Lulu.
  * Each task has a type, description, and completion status.
@@ -77,6 +79,57 @@ public class Task {
         assert keyword != null : "Keyword must not be null";
         assert description != null : "Description should not be null here";
         return description.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    /**
+     * Returns a normalised version of the task description.
+     * <p>
+     * Normalisation trims leading/trailing spaces, collapses multiple
+     * spaces into one, and converts text to lowercase.
+     *
+     * @return normalised description string.
+     */
+    private String normalisedDesc() {
+        return description == null ? "" : description.trim().replaceAll("\\s+", " ").toLowerCase();
+    }
+
+    /**
+     * Returns true if this task is considered a duplicate of another task.
+     * <p>
+     * Two tasks are considered equal if:
+     * <ul>
+     *     <li>They are of the same concrete type</li>
+     *     <li>They have the same task type</li>
+     *     <li>Their descriptions are equal after normalisation</li>
+     * </ul>
+     * The completion status (isDone) is ignored when checking equality.
+     *
+     * @param other The object to compare against.
+     * @return true if both tasks represent the same logical task.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        Task that = (Task) other;
+
+        // IMPORTANT: we ignore isDone for duplication purposes
+        return this.type == that.type
+                && this.normalisedDesc().equals(that.normalisedDesc());
+    }
+
+    /**
+     * Returns a hash code consistent with {@link #equals(Object)}.
+     *
+     * @return hash code representing this task.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClass(), type, normalisedDesc());
     }
 
     /**

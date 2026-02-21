@@ -128,7 +128,7 @@ update 2 /desc submit final report
 ### 🔹 Update a Deadline time
 
 ```
-update 2 /by 2026-02-26 21:00
+update 2 /by 2026-02-26 22:00
 ```
 
 ---
