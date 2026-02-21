@@ -251,7 +251,7 @@ public class TaskList {
         }
 
         if (!changed) {
-            throw new LuluException("Nothing changed - the task already has that value.");
+            throw new LuluException("Nothing changed -- the task already has that value.");
         }
 
         if (hasDuplicateExceptIndex(index)) {
